@@ -1,4 +1,5 @@
 export const getMenuBySlug = async (slug: string) => {
+  console.log(slug);
   return [
     {
       category: "Carnes",
