@@ -5,6 +5,7 @@ import MenuObservation from "./MenuObservation";
 import MenuFooter from "./MenuFooter";
 import EmentaiRights from "../EmentaiRights";
 import classNames from "classnames";
+import { menuMock } from "@/mocks/menu";
 
 export default async function Menu({ slug }: { slug: string }) {
   const company = await CompanyService.getCompanyBySlug(slug);
@@ -22,7 +23,7 @@ export default async function Menu({ slug }: { slug: string }) {
         })}
       >
         <MenuHeader info={company.info} />
-        <MenuContent info={company.info} menu={company.menu} />
+        <MenuContent info={company.info} menu={company.menu || menuMock} />
         <MenuObservation info={company.info} />
         <MenuFooter info={company.info} />
       </div>
