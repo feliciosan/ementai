@@ -81,7 +81,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       await signInWithEmailAndPassword(firebaseAuth, email, password);
     } catch (error: unknown) {
-      alert("Login inválido! Por favor, verifique seu email e senha.");
+      const authError = error as AuthError;
+
+      if (
+        authError.code === AuthErrorCodes.INVALID_EMAIL ||
+        authError.code === AuthErrorCodes.INVALID_PASSWORD
+      ) {
+        alert("Login inválido! Por favor, verifique seu email e senha.");
+      } else {
+        alert("Algo deu errado! Por favor, tente novamente.");
+      }
     }
   };
 
@@ -102,17 +111,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       await signInWithPopup(firebaseAuth, provider);
       unsubscribeSigninWithGoogle();
-    } catch (error) {
-      alert("Não foi possível entrar! Por favor, tente novamente.");
+    } catch (error: unknown) {
+      const authError = error as AuthError;
+
+      if (authError.code === AuthErrorCodes.POPUP_CLOSED_BY_USER) {
+        alert("Login cancelado! Por favor, tente novamente.");
+      } else {
+        alert("Algo deu errado! Por favor, tente novamente.");
+      }
     }
   };
 
   const logout = async () => {
-    try {
-      await signOut(firebaseAuth);
-    } catch (error) {
-      alert("Não foi possível sair! Por favor, tente novamente.");
-    }
+    await signOut(firebaseAuth);
   };
 
   useEffect(() => {

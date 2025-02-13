@@ -1,7 +1,7 @@
 "use client";
 
 import CompanyService from "@/app/actions/company";
-import { TCompanyInfo, TCompanyResponse } from "@/app/actions/company.types";
+import { TCompanyResponse } from "@/app/actions/company.types";
 import UploadService from "@/app/actions/upload";
 import { useAuth } from "@/hooks/use-auth.hook";
 import { useCompanyPreview } from "@/hooks/use-company-preview";
