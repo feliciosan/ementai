@@ -32,7 +32,7 @@ type ICompanyInfoForm = {
 
 export default function CompanyInfoForm() {
   const { currentCompany } = useAuth();
-  const { setCompanyPreview, companyPreview } = useCompanyPreview();
+  const { setCompanyInfoPreview, companyInfoPreview } = useCompanyPreview();
   const queryClient = useQueryClient();
   const inputLogoRef = useRef<HTMLInputElement | null>(null);
   const inputBackgroundImageRef = useRef<HTMLInputElement | null>(null);
@@ -58,8 +58,8 @@ export default function CompanyInfoForm() {
       backgroundImage: currentCompany?.info?.backgroundImage || "",
       name: currentCompany?.info?.name || "",
       slogan: currentCompany?.info?.slogan || "",
-      primaryColor: currentCompany?.info?.theme.primaryColor || "#000000",
-      isDark: currentCompany?.info?.theme.isDark || false,
+      primaryColor: currentCompany?.info?.theme?.primaryColor || "#000000",
+      isDark: currentCompany?.info?.theme?.isDark || false,
     },
   });
 
@@ -136,23 +136,21 @@ export default function CompanyInfoForm() {
   const onPreview = async () => {
     const values = getValues();
 
-    setCompanyPreview({
-      info: {
-        logo: values.logo,
-        backgroundImage: values.backgroundImage,
-        name: values.name,
-        slogan: values.slogan,
-        theme: {
-          primaryColor: values.primaryColor,
-          isDark: values.isDark,
-        },
+    setCompanyInfoPreview({
+      logo: values.logo,
+      backgroundImage: values.backgroundImage,
+      name: values.name,
+      slogan: values.slogan,
+      theme: {
+        primaryColor: values.primaryColor,
+        isDark: values.isDark,
       },
     });
   };
 
   const onResetChanges = () => {
     reset();
-    setCompanyPreview(null);
+    setCompanyInfoPreview(null);
     setImagePreview({
       logo: null,
       backgroundImage: null,
@@ -310,7 +308,7 @@ export default function CompanyInfoForm() {
           </Field>
         </Fieldset>
         <Field className="flex justify-end gap-2">
-          {!!companyPreview && (
+          {!!companyInfoPreview && (
             <Button
               type="button"
               disabled={isSubmitting}

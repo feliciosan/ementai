@@ -14,7 +14,7 @@ import { TCompanyInfo } from "@/app/actions/company.types";
 
 export default function MenuPreview() {
   const { currentCompany } = useAuth();
-  const { companyPreview } = useCompanyPreview();
+  const { companyInfoPreview } = useCompanyPreview();
   const [companyInfo, setCompanyInfo] = useState<TCompanyInfo | null>(null);
   const menu = currentCompany?.menu || menuMock;
 
@@ -24,15 +24,15 @@ export default function MenuPreview() {
       ...currentCompany?.info,
     };
 
-    if (companyPreview) {
+    if (companyInfoPreview) {
       data = {
         ...data,
-        ...companyPreview.info,
+        ...companyInfoPreview,
       };
     }
 
     setCompanyInfo(data);
-  }, [companyPreview, currentCompany?.info]);
+  }, [companyInfoPreview, currentCompany?.info]);
 
   return (
     <Fragment>

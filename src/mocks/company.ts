@@ -9,4 +9,18 @@ export const companyInfoMock: TCompanyInfo = {
     primaryColor: "#ca1209",
     isDark: false,
   },
+  aditicional: {
+    address: "Rua dos Bobos, 0",
+    phone: "922000000",
+    email: "meunegocio@gmail.com",
+    extra: {
+      label: "Take Away",
+      value: "10% OFF, use o cupom: TAKEAWAY",
+    },
+  },
+  social: {
+    instagram: "https://www.instagram.com",
+    facebook: "https://www.facebook.com",
+    whatsapp: "922000000",
+  },
 };

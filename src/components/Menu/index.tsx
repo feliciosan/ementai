@@ -10,7 +10,7 @@ import { menuMock } from "@/mocks/menu";
 export default async function Menu({ slug }: { slug: string }) {
   const company = await CompanyService.getCompanyBySlug(slug);
 
-  if (!company) {
+  if (!company?.info) {
     return <div>Not found</div>;
   }
 
@@ -18,8 +18,8 @@ export default async function Menu({ slug }: { slug: string }) {
     <div>
       <div
         className={classNames("flex flex-col", {
-          "bg-neutral-900 text-white": company.info.theme.isDark,
-          "bg-white text-neutral-950": !company.info.theme.isDark,
+          "bg-neutral-900 text-white": company?.info?.theme?.isDark,
+          "bg-white text-neutral-950": !company?.info?.theme?.isDark,
         })}
       >
         <MenuHeader info={company.info} />

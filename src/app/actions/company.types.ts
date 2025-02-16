@@ -11,6 +11,22 @@ export type TCompanyMenu = {
   items: TCompanyMenuItem[];
 };
 
+export type ICompanyAditional = {
+  address: string;
+  phone: string;
+  email: string;
+  extra: {
+    label: string;
+    value: string;
+  };
+};
+
+export type ICompanySocial = {
+  instagram: string;
+  facebook: string;
+  whatsapp: string;
+};
+
 export type TCompanyInfo = {
   name: string;
   logo: string;
@@ -20,12 +36,14 @@ export type TCompanyInfo = {
     primaryColor: string;
     isDark: boolean;
   };
+  aditicional?: ICompanyAditional;
+  social?: ICompanySocial;
 };
 
 export type TCompanyResponse = {
   id: string;
-  slug: string;
   email: string;
-  info: TCompanyInfo;
-  menu: TCompanyMenu[];
+  slug?: string;
+  info?: Partial<TCompanyInfo>;
+  menu?: TCompanyMenu[];
 };

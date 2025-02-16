@@ -9,7 +9,7 @@ export default function MenuContent({
   menu,
   isPreview,
 }: {
-  info: TCompanyInfo;
+  info: Partial<TCompanyInfo>;
   menu: TMenu[];
   isPreview?: boolean;
 }) {
@@ -22,7 +22,7 @@ export default function MenuContent({
         <span
           className="flex w-28 h-1 mx-auto"
           style={{
-            backgroundColor: info.theme.primaryColor,
+            backgroundColor: info.theme?.primaryColor,
           }}
         ></span>
         <p className="text-md px-10 pt-4 text-center">{info.slogan}</p>
@@ -31,15 +31,15 @@ export default function MenuContent({
         className={classNames(
           "py-6 flex justify-center items-center gap-2 sticky bottom-0 z-10",
           {
-            "bg-neutral-900": info.theme.isDark,
-            "bg-white": !info.theme.isDark,
+            "bg-neutral-900": info.theme?.isDark,
+            "bg-white": !info.theme?.isDark,
           }
         )}
       >
         <h2 className="text-xl font-bold relative">
           <MdKeyboardDoubleArrowDown
             className="text-2xl mt-2 animate-bounce absolute -left-7 -top-0.5"
-            style={{ color: info.theme.primaryColor }}
+            style={{ color: info.theme?.primaryColor }}
           />
           MENU
         </h2>
@@ -54,11 +54,11 @@ export default function MenuContent({
                   {
                     "top-0": !isPreview,
                     "top-16": isPreview,
-                    "bg-gray-50": !info.theme.isDark,
-                    "bg-neutral-950": info.theme.isDark,
+                    "bg-gray-50": !info.theme?.isDark,
+                    "bg-neutral-950": info.theme?.isDark,
                   }
                 )}
-                style={{ borderColor: info.theme.primaryColor }}
+                style={{ borderColor: info.theme?.primaryColor }}
               >
                 <h2 className="text-2xl md:text-3xl font-extrabold relative z-10 w-2/3 line-clamp-2">
                   {category.category}
@@ -72,8 +72,8 @@ export default function MenuContent({
                     className={classnames(
                       "flex justify-between py-6 gap-4 border-b last:border-b-0",
                       {
-                        "border-gray-200": !info.theme.isDark,
-                        "border-neutral-950": info.theme.isDark,
+                        "border-gray-200": !info.theme?.isDark,
+                        "border-neutral-950": info.theme?.isDark,
                       }
                     )}
                   >
@@ -88,7 +88,7 @@ export default function MenuContent({
                             <span
                               className="text-xs font-bold px-1.5 py-1 rounded-full inline-block"
                               style={{
-                                backgroundColor: info.theme.primaryColor,
+                                backgroundColor: info.theme?.primaryColor,
                                 color: "white",
                               }}
                             >
@@ -99,7 +99,7 @@ export default function MenuContent({
                             <span
                               className="text-xs font-bold px-1.5 py-1 rounded-full inline-block"
                               style={{
-                                backgroundColor: info.theme.primaryColor,
+                                backgroundColor: info.theme?.primaryColor,
                                 color: "white",
                               }}
                             >

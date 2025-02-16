@@ -2,9 +2,9 @@ import React, { createContext, useState } from "react";
 import { TCompanyResponse } from "@/app/actions/company.types";
 
 interface ICompanyPreviewContext {
-  companyPreview: Partial<TCompanyResponse> | null;
-  setCompanyPreview: React.Dispatch<
-    React.SetStateAction<Partial<TCompanyResponse> | null>
+  companyInfoPreview: Partial<TCompanyResponse["info"]> | null;
+  setCompanyInfoPreview: React.Dispatch<
+    React.SetStateAction<Partial<TCompanyResponse["info"]> | null>
   >;
 }
 
@@ -12,19 +12,20 @@ export const CompanyPreviewContext = createContext<
   ICompanyPreviewContext | undefined
 >(undefined);
 
-export const CompanyPreviewProvider = ({
+export const CompanyInfoPreviewProvider = ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
-  const [companyPreview, setCompanyPreview] =
-    useState<Partial<TCompanyResponse> | null>(null);
+  const [companyInfoPreview, setCompanyInfoPreview] = useState<Partial<
+    TCompanyResponse["info"]
+  > | null>(null);
 
   return (
     <CompanyPreviewContext.Provider
       value={{
-        companyPreview,
-        setCompanyPreview,
+        companyInfoPreview,
+        setCompanyInfoPreview,
       }}
     >
       {children}

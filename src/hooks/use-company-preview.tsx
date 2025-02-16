@@ -8,7 +8,7 @@ export function useCompanyPreview() {
 
   if (!context) {
     throw new Error(
-      "useCompanyPreview must be used within a CompanyPreviewProvider"
+      "useCompanyPreview must be used within a CompanyInfoPreviewProvider"
     );
   }
 
