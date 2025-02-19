@@ -2,6 +2,7 @@
 
 import { useAuth } from "@/hooks/use-auth.hook";
 import { Button } from "@headlessui/react";
+import Link from "next/link";
 import { Fragment } from "react";
 
 export default function PortalHeader() {
@@ -11,8 +12,15 @@ export default function PortalHeader() {
       <nav className="flex items-center justify-between h-16 w-full max-w-6xl mx-auto px-6">
         {isAuthenticated && (
           <Fragment>
-            <div>
-              <h1 className="text-white text-lg font-bold">Ementai</h1>
+            <div className="flex items-center gap-8">
+              <h1 className="text-white text-lg font-bold rounded-md bg-teal-600 px-2 py-1">
+                Ementai
+              </h1>
+              <ul className="flex items-center gap-4 text-white text-md font-semibold">
+                <li>
+                  <Link href="/portal/menu">Meu menu</Link>
+                </li>
+              </ul>
             </div>
             <div>
               <Button

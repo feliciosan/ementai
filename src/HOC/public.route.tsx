@@ -13,10 +13,10 @@ const withPublic = <T extends object>(
     const router = useRouter();
 
     useEffect(() => {
-      if (isAuthenticated) {
+      if (isAuthenticated && !isAuthLoading) {
         router.push("/portal");
       }
-    }, [router, isAuthenticated]);
+    }, [router, isAuthenticated, isAuthLoading]);
 
     if (isAuthLoading || isAuthenticated) {
       return <Spinner type="global" />;

@@ -4,7 +4,7 @@ import ConfigForms from "@/components/ConfigForms";
 import MenuPreview from "@/components/MenuPreview";
 import withProtected from "@/HOC/protected.route";
 
-function PanelMenuPage() {
+function PanelPage() {
   return (
     <div className="md:flex md:justify-between">
       <div className="flex-1 px-4">
@@ -21,4 +21,4 @@ function PanelMenuPage() {
     </div>
   );
 }
-export default withProtected(PanelMenuPage);
+export default withProtected(PanelPage);

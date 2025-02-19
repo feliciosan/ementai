@@ -3,7 +3,6 @@
 import CompanyService from "@/app/actions/company";
 import { ICompanySocial, TCompanyResponse } from "@/app/actions/company.types";
 import { useAuth } from "@/hooks/use-auth.hook";
-import { useCompanyPreview } from "@/hooks/use-company-preview";
 import { Button, Field, Input, Label } from "@headlessui/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import classNames from "classnames";
@@ -12,7 +11,6 @@ import { useForm } from "react-hook-form";
 export default function CompanySocialForm() {
   const queryClient = useQueryClient();
   const { currentCompany } = useAuth();
-  const { setCompanyInfoPreview, companyInfoPreview } = useCompanyPreview();
 
   const { mutateAsync: setCompanyInfo } = useMutation({
     mutationKey: ["set-company-info", currentCompany?.id],
@@ -33,9 +31,7 @@ export default function CompanySocialForm() {
   const {
     register,
     handleSubmit,
-    getValues,
-    reset,
-    formState: { isDirty, isSubmitting },
+    formState: { isSubmitting },
   } = useForm<ICompanySocial>({
     defaultValues: currentCompany?.info?.social,
   });
@@ -44,19 +40,6 @@ export default function CompanySocialForm() {
     await setCompanyInfo({
       info: { social: data },
     });
-  };
-
-  const onPreview = async () => {
-    const values = getValues();
-
-    setCompanyInfoPreview({
-      social: values,
-    });
-  };
-
-  const onResetChanges = () => {
-    reset();
-    setCompanyInfoPreview(null);
   };
 
   return (
@@ -101,24 +84,6 @@ export default function CompanySocialForm() {
         />
       </Field>
       <Field className="flex justify-end gap-2">
-        {!!companyInfoPreview && (
-          <Button
-            type="button"
-            disabled={isSubmitting}
-            onClick={onResetChanges}
-            className="items-center min-w-24 gap-2 border border-red-700 rounded-md py-2 px-3 text-sm/6 font-semibold text-red-700 disabled:opacity-50 focus:outline-none data-[hover]:border-red-800 data-[hover]:text-red-800 data-[open]:bg-red-800 data-[focus]:outline-1 data-[focus]:outline-white"
-          >
-            Desfazer
-          </Button>
-        )}
-        <Button
-          type="button"
-          disabled={isSubmitting || !isDirty}
-          onClick={onPreview}
-          className="items-center min-w-24 gap-2 border border-teal-600 rounded-md py-2 px-3 text-sm/6 font-semibold text-teal-600 disabled:opacity-50 focus:outline-none data-[hover]:border-teal-700 data-[hover]:text-teal-700 data-[open]:bg-teal-700 data-[focus]:outline-1 data-[focus]:outline-white"
-        >
-          Visualizar
-        </Button>
         <Button
           type="submit"
           disabled={isSubmitting}

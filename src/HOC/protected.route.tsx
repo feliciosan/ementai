@@ -13,10 +13,10 @@ const withProtected = <T extends object>(
     const router = useRouter();
 
     useEffect(() => {
-      if (!isAuthenticated) {
+      if (!isAuthenticated && !isAuthLoading) {
         router.push("/portal/login");
       }
-    }, [router, isAuthenticated]);
+    }, [router, isAuthenticated, isAuthLoading]);
 
     if (isAuthLoading || !isAuthenticated) {
       return <Spinner type="global" />;

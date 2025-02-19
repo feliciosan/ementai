@@ -250,7 +250,12 @@ export default function CompanyInfoForm() {
           </Field>
         </Fieldset>
         <Field>
-          <Label className="text-sm/6 font-medium">Nome</Label>
+          <div className="flex items-center justify-between">
+            <Label className="text-sm/6 font-medium">Nome</Label>
+            <Description className="text-xs font-light">
+              www.ementai.com/{replaceSpecialCharacters(watch("name"))}
+            </Description>
+          </div>
           <Input
             type="text"
             placeholder="O nome do seu negócio é o que os clientes verão primeiro."

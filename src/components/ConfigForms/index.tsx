@@ -15,6 +15,7 @@ import {
 import CompanyInfoForm from "./CompanyInfoForm";
 import CompanyAditionalInfoForm from "./CompanyAditionalInfoForm";
 import CompanySocialForm from "./CompanySocialForm";
+import CompanyMenuForm from "./CompanyMenuForm";
 
 export default function ConfigForms() {
   return (
@@ -42,7 +43,7 @@ export default function ConfigForms() {
           <RiArrowDownSLine className="size-5 group-data-[open]:rotate-180" />
         </DisclosureButton>
         <DisclosurePanel className="mt-2 text-sm/5" unmount={false}>
-          No.
+          <CompanyMenuForm />
         </DisclosurePanel>
       </Disclosure>
       <Disclosure as="div" className="p-4 md:p-6">
