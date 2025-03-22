@@ -1,4 +1,4 @@
-import { TCompanyInfo } from "@/app/actions/company.types";
+import { TCompanyInfo } from "@/services/company.types";
 
 export const companyInfoMock: TCompanyInfo = {
   name: "Hot Grill by Ementai",

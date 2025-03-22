@@ -1,10 +1,7 @@
 "use client";
 
-import CompanyService from "@/app/actions/company";
-import {
-  ICompanyAditional,
-  TCompanyResponse,
-} from "@/app/actions/company.types";
+import CompanyService from "@/services/company";
+import { ICompanyAditional, TCompanyResponse } from "@/services/company.types";
 import { useAuth } from "@/hooks/use-auth.hook";
 import { Button, Field, Input, Label, Textarea } from "@headlessui/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -52,7 +49,7 @@ export default function CompanyAditionalInfoForm() {
     >
       <Field>
         <Label className="text-sm/6 font-medium">
-          Adicione a morada do seu estabalecimento:
+          Adicione o endereço do seu estabalecimento:
         </Label>
         <Textarea
           placeholder="Ex: Rua, Número, Cidade, Código Postal"
@@ -104,7 +101,7 @@ export default function CompanyAditionalInfoForm() {
         )}
       </Field>
       <Field>
-        <Label className="text-sm/6 font-medium">Informações extras:</Label>
+        <Label className="text-sm/6 font-medium">Informações adicionais:</Label>
         <Input
           type="text"
           placeholder="Título: Take Away, Desconto, etc..."

@@ -1,9 +1,9 @@
 "use client";
 
 import { useAuth } from "@/hooks/use-auth.hook";
-import { Button } from "@headlessui/react";
 import Link from "next/link";
 import { Fragment } from "react";
+import { Button } from "../ui/button";
 
 export default function PortalHeader() {
   const { isAuthenticated, logout } = useAuth();
@@ -13,21 +13,22 @@ export default function PortalHeader() {
         {isAuthenticated && (
           <Fragment>
             <div className="flex items-center gap-8">
-              <h1 className="text-white text-lg font-bold rounded-md bg-teal-600 px-2 py-1">
-                Ementai
-              </h1>
-              <ul className="flex items-center gap-4 text-white text-md font-semibold">
-                <li>
-                  <Link href="/portal/menu">Meu menu</Link>
+              <Link href="/admin/home">
+                <h1 className="text-white text-lg font-bold rounded-md bg-teal-600 px-2 py-1">
+                  Ementai
+                </h1>
+              </Link>
+              <ul className="flex items-center divide-x divide-neutral-700">
+                <li className="text-sm font-semibold text-white px-4">
+                  <Link href="/admin/home">Informações do negócio</Link>
+                </li>
+                <li className="text-sm font-semibold text-white px-4">
+                  <Link href="/admin/menu-settings">Meu cardápio</Link>
                 </li>
               </ul>
             </div>
             <div>
-              <Button
-                type="submit"
-                className="items-center gap-2 rounded-md py-2 px-3 text-sm/6 font-semibold text-white focus:outline-none data-[hover]:border-teal-700 data-[hover]:text-teal-700"
-                onClick={() => logout()}
-              >
+              <Button type="submit" onClick={() => logout()}>
                 Sair
               </Button>
             </div>

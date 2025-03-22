@@ -14,7 +14,7 @@ const withPublic = <T extends object>(
 
     useEffect(() => {
       if (isAuthenticated && !isAuthLoading) {
-        router.push("/portal");
+        router.push("/admin/home");
       }
     }, [router, isAuthenticated, isAuthLoading]);
 

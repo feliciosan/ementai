@@ -13,8 +13,8 @@ import {
 } from "firebase/auth";
 import { app } from "@/config/firebase";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { TCompanyResponse } from "@/app/actions/company.types";
-import CompanyService from "@/app/actions/company";
+import { TCompanyResponse } from "@/services/company.types";
+import CompanyService from "@/services/company";
 
 interface IAuthContext {
   currentCompany: TCompanyResponse | null;

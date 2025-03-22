@@ -1,13 +1,13 @@
 "use client";
 
-import CompanyService from "@/app/actions/company";
-import { TCompanyResponse } from "@/app/actions/company.types";
-import UploadService from "@/app/actions/upload";
+import CompanyService from "@/services/company";
+import { TCompanyInfo, TCompanyResponse } from "@/services/company.types";
+import UploadService from "@/services/upload";
 import { useAuth } from "@/hooks/use-auth.hook";
-import { useCompanyPreview } from "@/hooks/use-company-preview";
 import { replaceSpecialCharacters } from "@/utils/validator";
 import {
   Button,
+  Checkbox,
   Description,
   Field,
   Fieldset,
@@ -18,12 +18,14 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import classNames from "classnames";
 import Image from "next/image";
 import { ChangeEvent, useRef, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { IoImageOutline } from "react-icons/io5";
+import { RiCheckLine } from "react-icons/ri";
+import ImageStorage from "../ImageStorage";
 
 type ICompanyInfoForm = {
-  logo: string;
-  backgroundImage: string;
+  logo?: string;
+  backgroundImage?: string;
   name: string;
   slogan: string;
   primaryColor: string;
@@ -32,8 +34,8 @@ type ICompanyInfoForm = {
 
 export default function CompanyInfoForm() {
   const { currentCompany } = useAuth();
-  const { setCompanyInfoPreview, companyInfoPreview } = useCompanyPreview();
   const queryClient = useQueryClient();
+  const inputPrimaryColorRef = useRef<HTMLElement | null>(null);
   const inputLogoRef = useRef<HTMLInputElement | null>(null);
   const inputBackgroundImageRef = useRef<HTMLInputElement | null>(null);
   const [imagesPreview, setImagePreview] = useState<{
@@ -48,14 +50,11 @@ export default function CompanyInfoForm() {
     register,
     handleSubmit,
     watch,
+    control,
     setValue,
-    getValues,
-    reset,
-    formState: { errors, isSubmitting, isDirty },
+    formState: { errors, isSubmitting },
   } = useForm<ICompanyInfoForm>({
     defaultValues: {
-      logo: currentCompany?.info?.logo || "",
-      backgroundImage: currentCompany?.info?.backgroundImage || "",
       name: currentCompany?.info?.name || "",
       slogan: currentCompany?.info?.slogan || "",
       primaryColor: currentCompany?.info?.theme?.primaryColor || "#000000",
@@ -63,8 +62,7 @@ export default function CompanyInfoForm() {
     },
   });
 
-  const watchLogo = watch("logo");
-  const watchBackgroundImage = watch("backgroundImage");
+  const primaryColorField = register("primaryColor");
 
   const { mutateAsync: uploadFile } = useMutation({
     mutationKey: ["upload-file"],
@@ -108,52 +106,28 @@ export default function CompanyInfoForm() {
   };
 
   const onSubmit = async (data: ICompanyInfoForm) => {
-    let { logo, backgroundImage } = data;
+    const companyInfo: Partial<TCompanyInfo> = {
+      name: data.name,
+      slogan: data.slogan,
+      theme: {
+        primaryColor: data.primaryColor,
+        isDark: data.isDark,
+      },
+    };
 
     if (imagesPreview.logo) {
-      logo = await uploadFile(imagesPreview.logo);
+      companyInfo.logo = await uploadFile(imagesPreview.logo);
     }
 
     if (imagesPreview.backgroundImage) {
-      backgroundImage = await uploadFile(imagesPreview.backgroundImage);
+      companyInfo.backgroundImage = await uploadFile(
+        imagesPreview.backgroundImage
+      );
     }
 
     await setCompanyInfo({
       slug: replaceSpecialCharacters(data.name),
-      info: {
-        name: data.name,
-        logo: logo,
-        backgroundImage: backgroundImage,
-        slogan: data.slogan,
-        theme: {
-          primaryColor: data.primaryColor,
-          isDark: data.isDark,
-        },
-      },
-    });
-  };
-
-  const onPreview = async () => {
-    const values = getValues();
-
-    setCompanyInfoPreview({
-      logo: values.logo,
-      backgroundImage: values.backgroundImage,
-      name: values.name,
-      slogan: values.slogan,
-      theme: {
-        primaryColor: values.primaryColor,
-        isDark: values.isDark,
-      },
-    });
-  };
-
-  const onResetChanges = () => {
-    reset();
-    setCompanyInfoPreview(null);
-    setImagePreview({
-      logo: null,
-      backgroundImage: null,
+      info: companyInfo,
     });
   };
 
@@ -177,19 +151,29 @@ export default function CompanyInfoForm() {
             >
               <Input
                 type="file"
-                {...register("logo", { required: "O logotipo é obrigatório." })}
+                {...register("logo")}
                 onChange={(event) => handleChangeImage(event, "logo")}
                 ref={inputLogoRef}
                 hidden
               />
               <div className="h-16 w-16 flex items-center justify-center rounded-md overflow-hidden">
-                {!!watchLogo ? (
+                {!!imagesPreview.logo ? (
                   <Image
-                    src={watchLogo}
+                    src={URL.createObjectURL(imagesPreview.logo)}
                     alt="Logo"
                     className="object-cover w-full h-full"
                     width={64}
                     height={64}
+                  />
+                ) : !!currentCompany?.info?.logo ? (
+                  <ImageStorage
+                    path={currentCompany?.info?.logo || ""}
+                    options={{
+                      alt: "Logo",
+                      width: 64,
+                      height: 64,
+                      className: "object-cover w-full h-full",
+                    }}
                   />
                 ) : (
                   <IoImageOutline className="size-14" />
@@ -226,13 +210,23 @@ export default function CompanyInfoForm() {
                 hidden
               />
               <div className="h-16 w-16 flex items-center justify-center rounded-md overflow-hidden">
-                {!!watchBackgroundImage ? (
+                {!!imagesPreview.backgroundImage ? (
                   <Image
-                    src={watchBackgroundImage}
+                    src={URL.createObjectURL(imagesPreview.backgroundImage)}
                     alt="Logo"
                     className="object-cover w-full h-full"
                     width={64}
                     height={64}
+                  />
+                ) : currentCompany?.info?.backgroundImage ? (
+                  <ImageStorage
+                    path={currentCompany?.info?.backgroundImage || ""}
+                    options={{
+                      alt: "Background Image",
+                      width: 64,
+                      height: 64,
+                      className: "object-cover w-full h-full",
+                    }}
                   />
                 ) : (
                   <IoImageOutline className="size-14" />
@@ -253,7 +247,7 @@ export default function CompanyInfoForm() {
           <div className="flex items-center justify-between">
             <Label className="text-sm/6 font-medium">Nome</Label>
             <Description className="text-xs font-light">
-              www.ementai.com/{replaceSpecialCharacters(watch("name"))}
+              www.ementai.com/menu/{replaceSpecialCharacters(watch("name"))}
             </Description>
           </div>
           <Input
@@ -287,50 +281,55 @@ export default function CompanyInfoForm() {
         </Field>
         <Fieldset>
           <Field className="flex-1 flex items-center gap-2">
-            <Label className="text-sm/6 font-medium">
+            <Label className="text-sm/6 font-medium" htmlFor="primary-color">
               Cor principal da sua marca:
             </Label>
-            <Input
-              type="color"
-              {...register("primaryColor")}
-              className="h-8 w-full flex-1 cursor-pointer"
-            />
+            <div
+              className={classNames(
+                "h-8 rounded-md overflow-hidden cursor-pointer w-full flex-1"
+              )}
+              style={{ backgroundColor: watch("primaryColor") }}
+              onClick={() => inputPrimaryColorRef.current?.click()}
+            >
+              <Input
+                type="color"
+                id="primary-color"
+                {...primaryColorField}
+                ref={(elementRef) => {
+                  primaryColorField.ref(elementRef);
+                  inputPrimaryColorRef.current = elementRef;
+                }}
+                className="h-8 w-8 invisible"
+              />
+            </div>
             {!!errors.primaryColor && (
               <p role="alert" className="text-red-700 text-xs mt-1">
                 {errors.primaryColor.message}
               </p>
             )}
           </Field>
-          <Field className="flex-1 flex items-center gap-2">
-            <Label className="text-sm/6 font-medium">Tema escuro:</Label>
-            <div className="p-1 flex-1">
-              <Input
-                type="checkbox"
-                {...register("isDark")}
-                className="h-6 w-6 cursor-pointer"
-              />
-            </div>
+          <Field className="flex-1 flex items-center gap-2 mt-2">
+            <Label className="text-sm/6 cursor-pointer">
+              Aplicar tema escuro?
+            </Label>
+            <Controller
+              control={control}
+              name="isDark"
+              render={({ field }) => (
+                <div className="flex items-center gap-1">
+                  <Checkbox
+                    {...field}
+                    checked={field.value}
+                    className="group flex items-center justify-center size-5 border border-gray-200 cursor-pointer rounded-md bg-white ring-0 ring-white ring-inset data-[checked]:bg-teal-600 data-[checked]:border-teal-600"
+                  >
+                    <RiCheckLine className="hidden size-4 fill-white group-data-[checked]:block" />
+                  </Checkbox>
+                </div>
+              )}
+            />
           </Field>
         </Fieldset>
         <Field className="flex justify-end gap-2">
-          {!!companyInfoPreview && (
-            <Button
-              type="button"
-              disabled={isSubmitting}
-              onClick={onResetChanges}
-              className="items-center min-w-24 gap-2 border border-red-700 rounded-md py-2 px-3 text-sm/6 font-semibold text-red-700 disabled:opacity-50 focus:outline-none data-[hover]:border-red-800 data-[hover]:text-red-800 data-[open]:bg-red-800 data-[focus]:outline-1 data-[focus]:outline-white"
-            >
-              Desfazer
-            </Button>
-          )}
-          <Button
-            type="button"
-            disabled={isSubmitting || !isDirty}
-            onClick={onPreview}
-            className="items-center min-w-24 gap-2 border border-teal-600 rounded-md py-2 px-3 text-sm/6 font-semibold text-teal-600 disabled:opacity-50 focus:outline-none data-[hover]:border-teal-700 data-[hover]:text-teal-700 data-[open]:bg-teal-700 data-[focus]:outline-1 data-[focus]:outline-white"
-          >
-            Visualizar
-          </Button>
           <Button
             type="submit"
             disabled={isSubmitting}

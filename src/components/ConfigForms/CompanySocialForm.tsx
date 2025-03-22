@@ -1,7 +1,7 @@
 "use client";
 
-import CompanyService from "@/app/actions/company";
-import { ICompanySocial, TCompanyResponse } from "@/app/actions/company.types";
+import CompanyService from "@/services/company";
+import { ICompanySocial, TCompanyResponse } from "@/services/company.types";
 import { useAuth } from "@/hooks/use-auth.hook";
 import { Button, Field, Input, Label } from "@headlessui/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -48,8 +48,11 @@ export default function CompanySocialForm() {
       className="flex flex-col mt-6 relative gap-4"
     >
       <Field>
-        <Label className="text-sm/6 font-medium">Instagram:</Label>
+        <Label className="text-sm/6 font-medium" htmlFor="instagram-field">
+          Instagram:
+        </Label>
         <Input
+          id="instagram-field"
           type="text"
           placeholder="Link do seu perfil do Instagram"
           {...register("instagram")}
