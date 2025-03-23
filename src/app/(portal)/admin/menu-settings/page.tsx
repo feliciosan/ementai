@@ -83,7 +83,7 @@ export default function MenuSettingsPage() {
             onDragEnd={handleDranEnd}
           >
             <SortableContext items={menuCategories}>
-              <div className="w-full mt-3 bg-white rounded-xl overflow-hidden divide-y divide-neutral-200 border border-neutral-200">
+              <div className="w-full flex flex-col mt-3 gap-2">
                 {menuCategories?.map((category) => (
                   <MenuSortableCategory key={category.id} category={category} />
                 ))}

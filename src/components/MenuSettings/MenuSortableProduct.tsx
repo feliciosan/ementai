@@ -26,6 +26,7 @@ import Image from "next/image";
 import { Control, FieldArrayWithId } from "react-hook-form";
 import { TMenuProductForm } from "./MenuProductForm";
 import { Textarea } from "../ui/textarea";
+import { cn } from "@/lib/utils";
 
 export default function MenuSortableProduct({
   index,
@@ -46,7 +47,7 @@ export default function MenuSortableProduct({
   handleDelete: (index: number) => void;
 }) {
   const imageUrlsInputRef = useRef<(HTMLElement | null)[]>([]);
-  const { attributes, listeners, setNodeRef, transform, transition } =
+  const { attributes, listeners, setNodeRef, transform, transition, active } =
     useSortable({ id: item.fieldId });
 
   const style: CSSProperties = {
@@ -58,23 +59,25 @@ export default function MenuSortableProduct({
     <div
       ref={setNodeRef}
       style={style}
-      className="bg-white border border-neutral-200 p-2 rounded-lg flex flex-col gap-2"
+      className={cn(
+        "bg-white border border-neutral-200 rounded-lg flex flex-col gap-2 relative overflow-hidden",
+        {
+          "z-10 bg-opacity-0 backdrop-blur-lg": active?.id === item.fieldId,
+        }
+      )}
     >
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex items-center justify-between gap-2 bg-neutral-100 p-2">
         <div className="flex items-center gap-2">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <GripVertical
-                size={20}
-                className="cursor-pointer mx-1"
-                {...attributes}
-                {...listeners}
-              />
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Alterar posição</p>
-            </TooltipContent>
-          </Tooltip>
+          <div {...attributes} {...listeners}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <GripVertical size={20} className="cursor-pointer mx-1" />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Alterar posição</p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
           <div className="flex items-center gap-4 justify-end">
             <FormField
               control={control}
@@ -112,7 +115,7 @@ export default function MenuSortableProduct({
         </div>
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button type="button" size="icon" variant="secondary">
+            <Button type="button" size="icon" variant="ghost">
               <Trash2 />
             </Button>
           </AlertDialogTrigger>
@@ -134,7 +137,7 @@ export default function MenuSortableProduct({
           </AlertDialogContent>
         </AlertDialog>
       </div>
-      <div>
+      <div className="px-2">
         <FormField
           control={control}
           name={`menu.${index}.title`}
@@ -148,7 +151,7 @@ export default function MenuSortableProduct({
           )}
         />
       </div>
-      <div className="flex gap-2">
+      <div className="flex gap-2 px-2 pb-2">
         <div className="flex-1 flex flex-col gap-2">
           <FormField
             control={control}

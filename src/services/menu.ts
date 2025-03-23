@@ -34,7 +34,11 @@ const MenuService = {
 
       const promises = menuCategoriesSnapshot.docs.map(async (doc) => {
         const data = doc.data();
-        const items = await getDocs(collection(doc.ref, "items"));
+        const queryItemsRef = query(
+          collection(doc.ref, "items"),
+          orderBy("indexPosition", "asc")
+        );
+        const items = await getDocs(queryItemsRef);
         const ItemsData = items.docs.map((item) => {
           const itemData = item.data();
 
@@ -66,7 +70,8 @@ const MenuService = {
     const categoryRef = doc(menuCollectionRef, params.categoryId);
     const categorySnapshot = await getDoc(categoryRef);
     const itemsCollectionRef = collection(categoryRef, "items");
-    const itemsSnapshot = await getDocs(itemsCollectionRef);
+    const queryRef = query(itemsCollectionRef, orderBy("createdAt", "asc"));
+    const itemsSnapshot = await getDocs(queryRef);
 
     const items = itemsSnapshot.docs.map((doc) => {
       return {
@@ -136,14 +141,19 @@ const MenuService = {
     const itemsCollectionRef = collection(categoryRef, "items");
     const batch = writeBatch(database);
 
-    items.forEach((item) => {
+    items.forEach((item, index) => {
       if (item.id) {
-        batch.set(doc(itemsCollectionRef, item.id), item, { merge: true });
+        batch.set(
+          doc(itemsCollectionRef, item.id),
+          { ...item, indexPosition: index },
+          { merge: true }
+        );
         return;
       }
 
       batch.set(doc(itemsCollectionRef), {
         ...item,
+        indexPosition: index,
         createdAt: serverTimestamp(),
       });
     });

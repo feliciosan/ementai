@@ -1,6 +1,8 @@
 "use client";
 
 import MenuService from "@/services/menu";
+import MenuSortableProduct from "./MenuSortableProduct";
+import UploadService from "@/services/upload";
 import {
   TMenuCategoryItem,
   TMenuCategoryItemPayload,
@@ -10,14 +12,13 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useFieldArray, useForm } from "react-hook-form";
 import { Plus } from "lucide-react";
 import { ChangeEvent, useState } from "react";
-import UploadService from "@/services/upload";
 import { Button } from "../ui/button";
 import { Form } from "../ui/form";
 import { toast } from "sonner";
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import { DndContext, DragEndEvent } from "@dnd-kit/core";
-import { arrayMove, SortableContext } from "@dnd-kit/sortable";
-import MenuSortableProduct from "./MenuSortableProduct";
+import { SortableContext } from "@dnd-kit/sortable";
+import { cn } from "@/lib/utils";
 
 export type TMenuProductForm = {
   menu: TMenuCategoryItemPayload[];
@@ -33,8 +34,8 @@ export default function MenuProductForm({
   items: TMenuCategoryItem[];
 }) {
   const queryClient = useQueryClient();
-  // const imageUrlsInputRef = useRef<(HTMLElement | null)[]>([]);
   const [imagesToUpload, setImagesToUpload] = useState<File[]>([]);
+  const [allowSaveChanges, setAllowSaveChanges] = useState<boolean>(false);
   const { currentCompany } = useAuth();
 
   const { mutateAsync: uploadFile } = useMutation({
@@ -49,6 +50,7 @@ export default function MenuProductForm({
       MenuService.setMenuItems(currentCompany?.id || "", categoryId, data),
     onSuccess: async () => {
       toast.success("Itens salvos com sucesso!");
+      setAllowSaveChanges(false);
       await queryClient.invalidateQueries({
         queryKey: ["get-category-items", currentCompany?.id, categoryId],
       });
@@ -83,11 +85,10 @@ export default function MenuProductForm({
 
   const {
     control,
-    setValue,
-    formState: { isSubmitting },
+    formState: { isSubmitting, isDirty },
   } = form;
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, move } = useFieldArray({
     control,
     name: "menu",
     keyName: "fieldId",
@@ -96,14 +97,14 @@ export default function MenuProductForm({
   const handleDranEnd = ({ active, over }: DragEndEvent) => {
     if (!over || active.id === over.id) return;
 
-    const activeIndex = fields.findIndex((field) => field.id === active.id);
+    const activeIndex = fields.findIndex(
+      (field) => field.fieldId === active.id
+    );
 
-    const overIndex = fields.findIndex((field) => field.id === over.id);
+    const overIndex = fields.findIndex((field) => field.fieldId === over.id);
 
-    // arrayMove(fields, activeIndex, overIndex);
-    setValue("menu", arrayMove(fields, activeIndex, overIndex));
-    // move(activeIndex, overIndex);
-    // setAllowSaveChanges(true);
+    move(activeIndex, overIndex);
+    setAllowSaveChanges(true);
   };
 
   const onSubmit = async (values: TMenuProductForm) => {
@@ -177,7 +178,7 @@ export default function MenuProductForm({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col relative gap-6 w-full"
+        className="flex flex-col relative gap-2 w-full"
       >
         <DndContext
           modifiers={[restrictToVerticalAxis]}
@@ -194,240 +195,6 @@ export default function MenuProductForm({
                 handleChangeImage={handleChangeImage}
                 handleDelete={handleDelete}
               />
-              // <div key={item.fieldId}>
-              //   <div className="bg-white border border-neutral-200 p-2 rounded-lg flex flex-col gap-2">
-              //     <div className="flex items-center justify-between gap-2">
-              //       <div className="flex items-center gap-2">
-              //         <Tooltip>
-              //           <TooltipTrigger asChild>
-              //             <GripVertical
-              //               size={20}
-              //               className="cursor-pointer mx-1"
-              //             />
-              //           </TooltipTrigger>
-              //           <TooltipContent>
-              //             <p>Alterar posição</p>
-              //           </TooltipContent>
-              //         </Tooltip>
-              //         <div className="flex items-center gap-4 justify-end">
-              //           <FormField
-              //             control={form.control}
-              //             name={`menu.${index}.new`}
-              //             render={({ field: { onChange, value, ...rest } }) => (
-              //               <FormItem className="flex items-center gap-2">
-              //                 <FormControl>
-              //                   <Checkbox
-              //                     {...rest}
-              //                     checked={value}
-              //                     onCheckedChange={onChange}
-              //                   />
-              //                 </FormControl>
-              //                 <FormLabel className="leading-none">
-              //                   Novidade
-              //                 </FormLabel>
-              //               </FormItem>
-              //             )}
-              //           />
-              //           <FormField
-              //             control={form.control}
-              //             name={`menu.${index}.bestSeller`}
-              //             render={({ field: { onChange, value, ...rest } }) => (
-              //               <FormItem className="flex items-center gap-2">
-              //                 <FormControl>
-              //                   <Checkbox
-              //                     {...rest}
-              //                     checked={value}
-              //                     onCheckedChange={onChange}
-              //                   />
-              //                 </FormControl>
-              //                 <FormLabel className="leading-none">
-              //                   Mais vendido
-              //                 </FormLabel>
-              //               </FormItem>
-              //             )}
-              //           />
-              //         </div>
-              //       </div>
-              //       <AlertDialog>
-              //         <AlertDialogTrigger asChild>
-              //           <Button type="button" size="icon" variant="secondary">
-              //             <Trash2 />
-              //           </Button>
-              //         </AlertDialogTrigger>
-              //         <AlertDialogContent>
-              //           <AlertDialogHeader>
-              //             <AlertDialogTitle>
-              //               Tem certeza que deseja excluir este item?
-              //             </AlertDialogTitle>
-              //             <AlertDialogDescription>
-              //               Esta ação não poderá ser desfeita.
-              //             </AlertDialogDescription>
-              //           </AlertDialogHeader>
-              //           <AlertDialogFooter>
-              //             <AlertDialogCancel>Não</AlertDialogCancel>
-              //             <AlertDialogAction
-              //               onClick={() => handleRemove(index)}
-              //             >
-              //               Sim
-              //             </AlertDialogAction>
-              //           </AlertDialogFooter>
-              //         </AlertDialogContent>
-              //       </AlertDialog>
-              //     </div>
-              //     <div>
-              //       <FormField
-              //         control={control}
-              //         name={`menu.${index}.title`}
-              //         rules={{ required: true }}
-              //         render={({ field }) => (
-              //           <FormItem className="flex-1">
-              //             <FormControl>
-              //               <Input
-              //                 type="text"
-              //                 placeholder="Título do produto"
-              //                 {...field}
-              //               />
-              //             </FormControl>
-              //           </FormItem>
-              //         )}
-              //       />
-              //     </div>
-              //     <div className="flex gap-2">
-              //       <div className="flex-1 flex flex-col gap-2">
-              //         <FormField
-              //           control={control}
-              //           name={`menu.${index}.description`}
-              //           render={({ field }) => (
-              //             <FormItem className="flex-1">
-              //               <FormControl>
-              //                 <Textarea
-              //                   placeholder="Informações como ingredientes, acompanhamentos e etc."
-              //                   className="h-16 resize-none"
-              //                   {...field}
-              //                 />
-              //               </FormControl>
-              //             </FormItem>
-              //           )}
-              //         />
-              //         <div className="flex gap-2">
-              //           <div className="flex flex-1 gap-2">
-              //             <FormField
-              //               control={control}
-              //               name={`menu.${index}.price.0.label`}
-              //               render={({ field }) => (
-              //                 <FormItem className="flex-1">
-              //                   <FormControl>
-              //                     <Input
-              //                       type="text"
-              //                       placeholder="Ex: 1 pessoa/unidade"
-              //                       {...field}
-              //                     />
-              //                   </FormControl>
-              //                 </FormItem>
-              //               )}
-              //             />
-              //             <FormField
-              //               control={control}
-              //               name={`menu.${index}.price.0.value`}
-              //               rules={{
-              //                 required: true,
-              //               }}
-              //               render={({ field }) => (
-              //                 <FormItem className="flex-1">
-              //                   <FormControl>
-              //                     <Input
-              //                       type="text"
-              //                       placeholder="0,00"
-              //                       {...field}
-              //                       onChange={(event) => {
-              //                         formatMoneyInput(event);
-              //                         field.onChange(event);
-              //                       }}
-              //                     />
-              //                   </FormControl>
-              //                 </FormItem>
-              //               )}
-              //             />
-              //           </div>
-              //           <div className="flex flex-1 gap-2">
-              //             <FormField
-              //               control={control}
-              //               name={`menu.${index}.price.1.label`}
-              //               render={({ field }) => (
-              //                 <FormItem className="flex-1">
-              //                   <FormControl>
-              //                     <Input
-              //                       type="text"
-              //                       placeholder="Ex: 2 pessoas/unidades"
-              //                       {...field}
-              //                     />
-              //                   </FormControl>
-              //                 </FormItem>
-              //               )}
-              //             />
-              //             <FormField
-              //               control={control}
-              //               name={`menu.${index}.price.1.value`}
-              //               render={({ field }) => (
-              //                 <FormItem className="flex-1">
-              //                   <FormControl>
-              //                     <Input
-              //                       placeholder="0,00"
-              //                       type="text"
-              //                       {...field}
-              //                       onChange={(event) => {
-              //                         formatMoneyInput(event);
-              //                         field.onChange(event);
-              //                       }}
-              //                     />
-              //                   </FormControl>
-              //                 </FormItem>
-              //               )}
-              //             />
-              //           </div>
-              //         </div>
-              //       </div>
-              //       <div
-              //         onClick={() =>
-              //           imageUrlsInputRef.current?.[index]?.click()
-              //         }
-              //         className="flex items-center justify-center cursor-pointer rounded-lg border border-dashed border-neutral-200 w-27"
-              //       >
-              //         <Input
-              //           type="file"
-              //           hidden
-              //           onChange={(event) => handleChangeImage(event, index)}
-              //           ref={(elementRef) => {
-              //             imageUrlsInputRef.current[index] = elementRef;
-              //           }}
-              //         />
-              //         <div className="h-24 w-24 flex items-center justify-center rounded-md overflow-hidden">
-              //           {!!imagesToUpload[index] ? (
-              //             <Image
-              //               src={URL.createObjectURL(imagesToUpload[index])}
-              //               alt="Imagem do produto"
-              //               width={96}
-              //               height={96}
-              //               className="object-cover w-full h-full"
-              //             />
-              //           ) : !!item.imageUrls?.length ? (
-              //             <ImageStorage
-              //               path={item.imageUrls?.[0] || ""}
-              //               options={{
-              //                 alt: "Imagem do produto",
-              //                 width: 96,
-              //                 height: 96,
-              //                 className: "object-cover w-full h-full",
-              //               }}
-              //             />
-              //           ) : (
-              //             <ImageIcon className="size-8" />
-              //           )}
-              //         </div>
-              //       </div>
-              //     </div>
-              //   </div>
-              // </div>
             ))}
           </SortableContext>
         </DndContext>
@@ -441,7 +208,14 @@ export default function MenuProductForm({
             </Button>
           </div>
         )}
-        <div className="flex justify-end gap-2 sticky bottom-2 bg-neutral-900 p-4 rounded-lg shadow-md">
+        <div
+          className={cn(
+            "flex justify-end gap-2 sticky bottom-2 bg-neutral-900 p-4 rounded-lg shadow-md",
+            {
+              hidden: !allowSaveChanges && !isDirty,
+            }
+          )}
+        >
           <Button type="submit" variant="outline" disabled={isSubmitting}>
             {!items.length ? "Adicionar items" : "Salvar alterações"}
           </Button>

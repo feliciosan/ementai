@@ -56,9 +56,12 @@ export default function MenuSortableCategory({
     <div
       ref={setNodeRef}
       style={style}
-      className={cn("py-4 px-4 bg-white relative", {
-        "bg-neutral-100 z-10": active?.id === category.id,
-      })}
+      className={cn(
+        "py-4 px-4 bg-white relative border border-neutral-200 rounded-lg",
+        {
+          "z-10 bg-opacity-75 backdrop-blur-lg": active?.id === category.id,
+        }
+      )}
     >
       <div className="flex items-center gap-x-4 w-full justify-between">
         <div className="flex items-center gap-x-4">
