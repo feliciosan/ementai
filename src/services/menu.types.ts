@@ -8,6 +8,7 @@ export type TMenuCategoryItem = {
   new?: boolean;
   bestSeller?: boolean;
   imageUrls?: string[];
+  unavailable?: boolean;
 };
 
 export type TMenuCategory = {
@@ -20,5 +21,11 @@ export type TMenuCategory = {
 
 export type TMenuCategoryItemPayload = Pick<
   TMenuCategoryItem,
-  "title" | "description" | "price" | "new" | "bestSeller" | "imageUrls"
+  | "title"
+  | "description"
+  | "price"
+  | "new"
+  | "bestSeller"
+  | "imageUrls"
+  | "unavailable"
 > & { id?: string };

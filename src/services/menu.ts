@@ -9,6 +9,8 @@ import {
   orderBy,
   query,
   serverTimestamp,
+  updateDoc,
+  where,
   writeBatch,
 } from "firebase/firestore";
 import {
@@ -36,8 +38,10 @@ const MenuService = {
         const data = doc.data();
         const queryItemsRef = query(
           collection(doc.ref, "items"),
+          where("unavailable", "==", false),
           orderBy("indexPosition", "asc")
         );
+
         const items = await getDocs(queryItemsRef);
         const ItemsData = items.docs.map((item) => {
           const itemData = item.data();
@@ -118,6 +122,21 @@ const MenuService = {
       createdAt: serverTimestamp(),
       indexPosition,
       items: [],
+    });
+  },
+  async updateMenuCategory(
+    params: {
+      companyId: string;
+      categoryId: string;
+    },
+    data: { name: string }
+  ): Promise<void> {
+    const companyRef = doc(database, "companies", params.companyId);
+    const menuCollectionRef = collection(companyRef, "menu");
+    const categoryRef = doc(menuCollectionRef, params.categoryId);
+
+    await updateDoc(categoryRef, {
+      name: data.name,
     });
   },
   async deleteMenuCategory(params: {

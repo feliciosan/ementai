@@ -1,8 +1,6 @@
 "use client";
 
 import MenuService from "@/services/menu";
-import MenuCategoryForm from "@/components/MenuSettings/MenuCategoryForm";
-import MenuSortableCategory from "@/components/MenuSettings/MenuSortableCategory";
 import { useAuth } from "@/hooks/use-auth.hook";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { DndContext, DragEndEvent } from "@dnd-kit/core";
@@ -13,6 +11,8 @@ import { TMenuCategory } from "@/services/menu.types";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import MenuCategoryForm from "@/components/MenuCategoryForm";
+import MenuSortableCategoryItem from "@/components/MenuSortableCategoryItem";
 
 export default function MenuSettingsPage() {
   const queryClient = useQueryClient();
@@ -85,7 +85,10 @@ export default function MenuSettingsPage() {
             <SortableContext items={menuCategories}>
               <div className="w-full flex flex-col mt-3 gap-2">
                 {menuCategories?.map((category) => (
-                  <MenuSortableCategory key={category.id} category={category} />
+                  <MenuSortableCategoryItem
+                    key={category.id}
+                    category={category}
+                  />
                 ))}
               </div>
             </SortableContext>

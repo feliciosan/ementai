@@ -14,17 +14,23 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
+import { cn } from "@/lib/utils";
 
-type TMenuCategoryForm = {
-  name: string;
-};
+type TMenuCategoryForm = { id?: string; name: string };
 
-export default function MenuCategoryForm() {
+export default function MenuCategoryForm({
+  category,
+  onSubmitted,
+}: {
+  category?: TMenuCategoryForm;
+  onSubmitted?: () => void;
+}) {
+  const isEditing = !!category?.id;
   const queryClient = useQueryClient();
   const { currentCompany } = useAuth();
 
   const { mutateAsync: createCategory } = useMutation({
-    mutationKey: ["create-category", currentCompany?.id],
+    mutationKey: ["create-category"],
     mutationFn: (data: TMenuCategoryForm) =>
       MenuService.createMenuCategory(currentCompany?.id || "", data),
     onSuccess: () => {
@@ -32,16 +38,28 @@ export default function MenuCategoryForm() {
         queryKey: ["get-menu", currentCompany?.id],
       });
     },
-    onError: (error) => {
-      if (error instanceof Error) {
-        alert(error.message);
-      }
+  });
+
+  const { mutateAsync: updateCategory } = useMutation({
+    mutationKey: ["update-category"],
+    mutationFn: (data: TMenuCategoryForm) =>
+      MenuService.updateMenuCategory(
+        {
+          companyId: currentCompany?.id || "",
+          categoryId: category?.id || "",
+        },
+        data
+      ),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["get-menu", currentCompany?.id],
+      });
     },
   });
 
   const form = useForm<TMenuCategoryForm>({
     defaultValues: {
-      name: "",
+      name: category?.name || "",
     },
   });
 
@@ -53,24 +71,38 @@ export default function MenuCategoryForm() {
   } = form;
 
   const onSubmit = async (data: TMenuCategoryForm) => {
-    await createCategory(data);
+    if (isEditing) {
+      await updateCategory(data);
+    } else {
+      await createCategory(data);
+    }
+
     reset();
+    onSubmitted?.();
   };
 
   return (
     <Form {...form}>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex gap-2">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className={cn("flex gap-2", {
+          "flex-col gap-4": isEditing,
+        })}
+      >
         <FormField
           control={control}
           name="name"
           rules={{ required: "O nome da categoria é obrigatório" }}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Adicionar categorias:</FormLabel>
+              {!isEditing && <FormLabel>Adicionar categorias:</FormLabel>}
               <FormControl>
                 <Input
                   placeholder="Ex: Hamburgueres, Pizzas, Bebidas..."
-                  className="w-72"
+                  autoFocus
+                  className={cn("w-72", {
+                    "w-full": isEditing,
+                  })}
                   {...field}
                 />
               </FormControl>
@@ -78,8 +110,14 @@ export default function MenuCategoryForm() {
             </FormItem>
           )}
         />
-        <Button type="submit" disabled={isSubmitting} className="mt-5.5">
-          Adicionar
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          className={cn("mt-5.5", {
+            "mt-0": isEditing,
+          })}
+        >
+          {isEditing ? "Salvar alterações" : "Adicionar"}
         </Button>
       </form>
     </Form>

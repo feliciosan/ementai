@@ -16,22 +16,31 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import Link from "next/link";
-import { CSSProperties } from "react";
+import { CSSProperties, useState } from "react";
 import MenuService from "@/services/menu";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/use-auth.hook";
 import { toast } from "sonner";
-import { GripVertical, Trash2 } from "lucide-react";
+import { GripVertical, Pencil, Trash2 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import MenuCategoryForm from "../MenuCategoryForm";
 
-export default function MenuSortableCategory({
+export default function MenuSortableCategoryItem({
   category,
 }: {
   category: TMenuCategory;
 }) {
   const queryClient = useQueryClient();
   const { currentCompany } = useAuth();
+  const [openEditDialog, setOpenEditDialog] = useState(false);
   const { attributes, listeners, setNodeRef, transform, transition, active } =
     useSortable({ id: category.id });
 
@@ -83,6 +92,24 @@ export default function MenuSortableCategory({
               Gerenciar Itens
             </Link>
           </Button>
+          <Dialog open={openEditDialog} onOpenChange={setOpenEditDialog}>
+            <DialogTrigger asChild>
+              <Button type="button" size="icon" variant="outline">
+                <Pencil />
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Editar categoria</DialogTitle>
+              </DialogHeader>
+              <div className="pt-4">
+                <MenuCategoryForm
+                  category={category}
+                  onSubmitted={() => setOpenEditDialog(false)}
+                />
+              </div>
+            </DialogContent>
+          </Dialog>
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button type="button" size="icon" variant="outline">

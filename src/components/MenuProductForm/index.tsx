@@ -1,7 +1,6 @@
 "use client";
 
 import MenuService from "@/services/menu";
-import MenuSortableProduct from "./MenuSortableProduct";
 import UploadService from "@/services/upload";
 import {
   TMenuCategoryItem,
@@ -11,14 +10,14 @@ import { useAuth } from "@/hooks/use-auth.hook";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useFieldArray, useForm } from "react-hook-form";
 import { Plus } from "lucide-react";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useRef, useState } from "react";
 import { Button } from "../ui/button";
 import { Form } from "../ui/form";
 import { toast } from "sonner";
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import { DndContext, DragEndEvent } from "@dnd-kit/core";
 import { SortableContext } from "@dnd-kit/sortable";
-import { cn } from "@/lib/utils";
+import MenuProductFormSortableItem from "./MenuProductFormSortableItem";
 
 export type TMenuProductForm = {
   menu: TMenuCategoryItemPayload[];
@@ -34,8 +33,8 @@ export default function MenuProductForm({
   items: TMenuCategoryItem[];
 }) {
   const queryClient = useQueryClient();
+  const formWrapperRef = useRef<HTMLFormElement>(null);
   const [imagesToUpload, setImagesToUpload] = useState<File[]>([]);
-  const [allowSaveChanges, setAllowSaveChanges] = useState<boolean>(false);
   const { currentCompany } = useAuth();
 
   const { mutateAsync: uploadFile } = useMutation({
@@ -45,12 +44,11 @@ export default function MenuProductForm({
   });
 
   const { mutateAsync: setMenuItems } = useMutation({
-    mutationKey: ["create-menu-items"],
+    mutationKey: ["set-menu-items"],
     mutationFn: (data: TMenuCategoryItemPayload[]) =>
       MenuService.setMenuItems(currentCompany?.id || "", categoryId, data),
     onSuccess: async () => {
       toast.success("Itens salvos com sucesso!");
-      setAllowSaveChanges(false);
       await queryClient.invalidateQueries({
         queryKey: ["get-category-items", currentCompany?.id, categoryId],
       });
@@ -77,6 +75,7 @@ export default function MenuProductForm({
               ],
               new: false,
               bestSeller: false,
+              unavailable: false,
               imageUrls: [],
             },
           ],
@@ -85,7 +84,7 @@ export default function MenuProductForm({
 
   const {
     control,
-    formState: { isSubmitting, isDirty },
+    formState: { isSubmitting },
   } = form;
 
   const { fields, append, remove, move } = useFieldArray({
@@ -104,7 +103,6 @@ export default function MenuProductForm({
     const overIndex = fields.findIndex((field) => field.fieldId === over.id);
 
     move(activeIndex, overIndex);
-    setAllowSaveChanges(true);
   };
 
   const onSubmit = async (values: TMenuProductForm) => {
@@ -149,10 +147,18 @@ export default function MenuProductForm({
         ],
         new: false,
         bestSeller: false,
+        unavailable: false,
         imageUrls: [],
       },
-      { focusIndex: fields.length }
+      { focusName: `menu.${fields.length}.title` }
     );
+
+    setTimeout(() => {
+      formWrapperRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+      });
+    });
   };
 
   const handleDelete = (index: number) => {
@@ -178,6 +184,7 @@ export default function MenuProductForm({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
+        ref={formWrapperRef}
         className="flex flex-col relative gap-2 w-full"
       >
         <DndContext
@@ -186,7 +193,7 @@ export default function MenuProductForm({
         >
           <SortableContext items={fields.map((item) => item.fieldId)}>
             {fields.map((item, index) => (
-              <MenuSortableProduct
+              <MenuProductFormSortableItem
                 key={item.fieldId}
                 item={item}
                 index={index}
@@ -208,14 +215,7 @@ export default function MenuProductForm({
             </Button>
           </div>
         )}
-        <div
-          className={cn(
-            "flex justify-end gap-2 sticky bottom-2 bg-neutral-900 p-4 rounded-lg shadow-md",
-            {
-              hidden: !allowSaveChanges && !isDirty,
-            }
-          )}
-        >
+        <div className="flex justify-end gap-2 sticky bottom-2 bg-neutral-900 p-4 rounded-lg shadow-md">
           <Button type="submit" variant="outline" disabled={isSubmitting}>
             {!items.length ? "Adicionar items" : "Salvar alterações"}
           </Button>

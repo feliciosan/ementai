@@ -14,7 +14,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../ui/alert-dialog";
-import { CSSProperties, useRef } from "react";
+import { CSSProperties, Fragment, useRef } from "react";
 import { GripVertical, Trash2, Image as ImageIcon } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { FormControl, FormField, FormItem, FormLabel } from "../ui/form";
@@ -24,11 +24,13 @@ import { Input } from "../ui/input";
 import ImageStorage from "../ImageStorage";
 import Image from "next/image";
 import { Control, FieldArrayWithId } from "react-hook-form";
-import { TMenuProductForm } from "./MenuProductForm";
+import { TMenuProductForm } from ".";
 import { Textarea } from "../ui/textarea";
 import { cn } from "@/lib/utils";
+import { Switch } from "../ui/switch";
+import { Label } from "../ui/label";
 
-export default function MenuSortableProduct({
+export default function MenuProductFormSortableItem({
   index,
   item,
   control,
@@ -67,7 +69,7 @@ export default function MenuSortableProduct({
       )}
     >
       <div className="flex items-center justify-between gap-2 bg-neutral-100 p-2">
-        <div className="flex items-center gap-2">
+        <div className="flex flex-1 items-center gap-2">
           <div {...attributes} {...listeners}>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -78,39 +80,61 @@ export default function MenuSortableProduct({
               </TooltipContent>
             </Tooltip>
           </div>
-          <div className="flex items-center gap-4 justify-end">
-            <FormField
-              control={control}
-              name={`menu.${index}.new`}
-              render={({ field: { onChange, value, ...rest } }) => (
-                <FormItem className="flex items-center gap-2">
-                  <FormControl>
-                    <Checkbox
-                      {...rest}
-                      checked={value}
-                      onCheckedChange={onChange}
-                    />
-                  </FormControl>
-                  <FormLabel className="leading-none">Novidade</FormLabel>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={control}
-              name={`menu.${index}.bestSeller`}
-              render={({ field: { onChange, value, ...rest } }) => (
-                <FormItem className="flex items-center gap-2">
-                  <FormControl>
-                    <Checkbox
-                      {...rest}
-                      checked={value}
-                      onCheckedChange={onChange}
-                    />
-                  </FormControl>
-                  <FormLabel className="leading-none">Mais vendido</FormLabel>
-                </FormItem>
-              )}
-            />
+          <div className="flex items-center justify-between flex-1">
+            <div className="flex items-center gap-4">
+              <FormField
+                control={control}
+                name={`menu.${index}.new`}
+                render={({ field: { onChange, value, ...rest } }) => (
+                  <FormItem className="flex items-center gap-2">
+                    <FormControl>
+                      <Checkbox
+                        {...rest}
+                        checked={value}
+                        onCheckedChange={onChange}
+                      />
+                    </FormControl>
+                    <FormLabel className="leading-none">Novidade</FormLabel>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={control}
+                name={`menu.${index}.bestSeller`}
+                render={({ field: { onChange, value, ...rest } }) => (
+                  <FormItem className="flex items-center gap-2">
+                    <FormControl>
+                      <Checkbox
+                        {...rest}
+                        checked={value}
+                        onCheckedChange={onChange}
+                      />
+                    </FormControl>
+                    <FormLabel className="leading-none">Mais vendido</FormLabel>
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="flex items-center space-x-2">
+              <FormField
+                control={control}
+                name={`menu.${index}.unavailable`}
+                defaultValue={false}
+                render={({ field: { onChange, value, ...rest } }) => (
+                  <FormItem className="flex items-center gap-2">
+                    <FormControl>
+                      <Switch
+                        id="item-unavailable"
+                        {...rest}
+                        checked={value}
+                        onCheckedChange={onChange}
+                      />
+                    </FormControl>
+                    <Label htmlFor="item-unavailable">Indisponível</Label>
+                  </FormItem>
+                )}
+              />
+            </div>
           </div>
         </div>
         <AlertDialog>
@@ -248,7 +272,7 @@ export default function MenuSortableProduct({
         </div>
         <div
           onClick={() => imageUrlsInputRef.current?.[index]?.click()}
-          className="flex items-center justify-center cursor-pointer rounded-lg border border-dashed border-neutral-200 w-27"
+          className="flex items-center justify-center cursor-pointer rounded-lg border border-dashed border-neutral-200 w-27 hover:bg-neutral-100"
         >
           <Input
             type="file"
@@ -278,7 +302,10 @@ export default function MenuSortableProduct({
                 }}
               />
             ) : (
-              <ImageIcon className="size-8" />
+              <div className="flex flex-col items-center justify-center h-full gap-1">
+                <ImageIcon className="size-8" />
+                <span className="text-xs">Imagem</span>
+              </div>
             )}
           </div>
         </div>

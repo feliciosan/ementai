@@ -1,7 +1,7 @@
 "use client";
 
 import MenuService from "@/services/menu";
-import MenuProductForm from "@/components/MenuSettings/MenuProductForm";
+import MenuProductForm from "@/components/MenuProductForm";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
