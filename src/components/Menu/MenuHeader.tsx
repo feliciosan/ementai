@@ -21,7 +21,7 @@ export default function MenuHeader({ info }: { info: Partial<TCompanyInfo> }) {
     <header className="flex flex-col">
       <div className="px-3">
         <p className="text-xs font-semibold text-center mt-2 mb-3">
-          Menu by Ementai
+          Cardápio by Ementai
         </p>
         <div
           className="h-56 bg-no-repeat bg-cover bg-center relative rounded-xl"

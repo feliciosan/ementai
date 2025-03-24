@@ -14,7 +14,6 @@ export default function CompanyMenu() {
     queryFn: async () => CompanyService.getCompanyBySlug(params.slug || ""),
     initialData: null,
     enabled: !!params.slug,
-    staleTime: 1000 * 60 * 10,
   });
 
   useDynamicBG({ isDark: !!company?.info?.theme?.isDark });

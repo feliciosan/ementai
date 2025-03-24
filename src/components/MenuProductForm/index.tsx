@@ -87,7 +87,7 @@ export default function MenuProductForm({
     formState: { isSubmitting },
   } = form;
 
-  const { fields, append, remove, move } = useFieldArray({
+  const { fields, append, remove, move, update } = useFieldArray({
     control,
     name: "menu",
     keyName: "fieldId",
@@ -180,6 +180,18 @@ export default function MenuProductForm({
     }
   };
 
+  const handleDeleteImage = async (index: number) => {
+    setImagesToUpload((prev) => {
+      const newImageFiles = [...prev].slice(index, 1);
+      return newImageFiles;
+    });
+
+    update(index, {
+      ...fields[index],
+      imageUrls: [],
+    });
+  };
+
   return (
     <Form {...form}>
       <form
@@ -201,6 +213,7 @@ export default function MenuProductForm({
                 imagesToUpload={imagesToUpload}
                 handleChangeImage={handleChangeImage}
                 handleDelete={handleDelete}
+                handleDeleteImage={handleDeleteImage}
               />
             ))}
           </SortableContext>
