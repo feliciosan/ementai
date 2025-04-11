@@ -182,7 +182,8 @@ export default function MenuProductForm({
 
   const handleDeleteImage = async (index: number) => {
     setImagesToUpload((prev) => {
-      const newImageFiles = [...prev].slice(index, 1);
+      const newImageFiles = [...prev];
+      newImageFiles.splice(index, 1);
       return newImageFiles;
     });
 

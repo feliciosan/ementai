@@ -5,23 +5,36 @@ import { TCompanyInfo, TCompanyResponse } from "@/services/company.types";
 import UploadService from "@/services/upload";
 import { useAuth } from "@/hooks/use-auth.hook";
 import { replaceSpecialCharacters } from "@/utils/validator";
-import {
-  Button,
-  Checkbox,
-  Description,
-  Field,
-  Fieldset,
-  Input,
-  Label,
-} from "@headlessui/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import classNames from "classnames";
 import Image from "next/image";
 import { ChangeEvent, useRef, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { IoImageOutline } from "react-icons/io5";
-import { RiCheckLine } from "react-icons/ri";
+import { useForm } from "react-hook-form";
 import ImageStorage from "../ImageStorage";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
+import { Input } from "../ui/input";
+import { Checkbox } from "../ui/checkbox";
+import {
+  Palette,
+  Trash2,
+  Image as ImageIcon,
+  Pencil,
+  SquarePen,
+} from "lucide-react";
+import { Button } from "../ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 
 type ICompanyInfoForm = {
   logo?: string;
@@ -46,23 +59,27 @@ export default function CompanyInfoForm() {
     backgroundImage: null,
   });
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    control,
-    setValue,
-    formState: { errors, isSubmitting },
-  } = useForm<ICompanyInfoForm>({
+  const form = useForm<ICompanyInfoForm>({
     defaultValues: {
       name: currentCompany?.info?.name || "",
+      logo: currentCompany?.info?.logo || "",
+      backgroundImage: currentCompany?.info?.backgroundImage || "",
       slogan: currentCompany?.info?.slogan || "",
       primaryColor: currentCompany?.info?.theme?.primaryColor || "#000000",
       isDark: currentCompany?.info?.theme?.isDark || false,
     },
   });
 
-  const primaryColorField = register("primaryColor");
+  const {
+    handleSubmit,
+    watch,
+    control,
+    setValue,
+    formState: { isSubmitting },
+  } = form;
+
+  const logoField = watch("logo");
+  const backgroundImageField = watch("backgroundImage");
 
   const { mutateAsync: uploadFile } = useMutation({
     mutationKey: ["upload-file"],
@@ -79,11 +96,6 @@ export default function CompanyInfoForm() {
         queryKey: ["get-company-by-id", currentCompany?.id],
       });
     },
-    onError: (error) => {
-      if (error instanceof Error) {
-        alert(error.message);
-      }
-    },
   });
 
   const handleChangeImage = async (
@@ -93,10 +105,11 @@ export default function CompanyInfoForm() {
     const imageFile = event.target.files?.[0];
 
     if (imageFile) {
-      setImagePreview((prev) => ({
-        ...prev,
-        [type]: imageFile,
-      }));
+      setImagePreview((prev) => {
+        const newImagePreview = { ...prev };
+        newImagePreview[type] = imageFile;
+        return newImagePreview;
+      });
 
       setValue(type, URL.createObjectURL(imageFile), {
         shouldValidate: true,
@@ -105,10 +118,32 @@ export default function CompanyInfoForm() {
     }
   };
 
+  const handleDeleteImage = async (type: "logo" | "backgroundImage") => {
+    setImagePreview((prev) => {
+      return {
+        ...prev,
+        [type]: null,
+      };
+    });
+
+    setValue(type, "", {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+
+    if (type === "logo" && inputLogoRef.current) {
+      inputLogoRef.current.value = "";
+    } else if (type === "backgroundImage" && inputBackgroundImageRef.current) {
+      inputBackgroundImageRef.current.value = "";
+    }
+  };
+
   const onSubmit = async (data: ICompanyInfoForm) => {
     const companyInfo: Partial<TCompanyInfo> = {
       name: data.name,
       slogan: data.slogan,
+      logo: data.logo,
+      backgroundImage: data.backgroundImage,
       theme: {
         primaryColor: data.primaryColor,
         isDark: data.isDark,
@@ -132,213 +167,261 @@ export default function CompanyInfoForm() {
   };
 
   return (
-    <div>
+    <Form {...form}>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col gap-4 mt-4 relative"
+        className="flex flex-col gap-4 relative"
       >
-        <Fieldset className={"flex gap-4 flex-col md:flex-row"}>
-          <Field>
-            <Label className="text-sm/6 font-medium">Logotipo</Label>
-            <div
-              onClick={() => {
-                inputLogoRef.current?.click();
-              }}
-              className={classNames(
-                "mt-1 w-full rounded-lg border border-gray-300 p-2 gap-2",
-                "flex flex-1 items-center justify-center cursor-pointer"
-              )}
-            >
+        <div className="flex gap-4 flex-col md:flex-row">
+          <div className="flex flex-1 p-1 border border-neutral-200 rounded-lg">
+            <div className="flex items-center justify-center">
               <Input
                 type="file"
-                {...register("logo")}
-                onChange={(event) => handleChangeImage(event, "logo")}
-                ref={inputLogoRef}
                 hidden
+                onChange={(event) => handleChangeImage(event, "logo")}
+                ref={(elementRef) => {
+                  inputLogoRef.current = elementRef;
+                }}
               />
-              <div className="h-16 w-16 flex items-center justify-center rounded-md overflow-hidden">
+              <div className="flex items-center justify-center rounded-md overflow-hidden border border-dashed border-neutral-200 hover:bg-neutral-100 bg-white h-24 w-24 relative">
+                {(imagesPreview.logo || logoField) && (
+                  <div className="absolute flex gap-2 top-1 left-1">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button type="button" size="icon">
+                          <SquarePen />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        className="w-56"
+                        side="right"
+                        align="end"
+                      >
+                        <DropdownMenuItem
+                          onClick={() => inputLogoRef.current?.click()}
+                        >
+                          <Pencil />
+                          <span>Alterar</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => handleDeleteImage("logo")}
+                        >
+                          <Trash2 />
+                          <span>Excluir</span>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                )}
                 {!!imagesPreview.logo ? (
                   <Image
                     src={URL.createObjectURL(imagesPreview.logo)}
                     alt="Logo"
-                    className="object-cover w-full h-full"
-                    width={64}
-                    height={64}
+                    width={96}
+                    height={96}
+                    className="object-cover aspect-square"
                   />
-                ) : !!currentCompany?.info?.logo ? (
+                ) : logoField ? (
                   <ImageStorage
-                    path={currentCompany?.info?.logo || ""}
+                    path={logoField}
                     options={{
                       alt: "Logo",
-                      width: 64,
-                      height: 64,
-                      className: "object-cover w-full h-full",
+                      width: 96,
+                      height: 96,
+                      className: "object-cover aspect-square",
                     }}
                   />
                 ) : (
-                  <IoImageOutline className="size-14" />
+                  <div
+                    onClick={() => inputLogoRef.current?.click()}
+                    className="aspect-square h-24 w-24 flex flex-col items-center justify-center gap-1 cursor-pointer"
+                  >
+                    <ImageIcon className="size-8" />
+                  </div>
                 )}
               </div>
-              <Description className="flex-1 text-xs font-light">
-                Recomendamos que use uma imagem quadrada.
-              </Description>
             </div>
-            {!!errors.logo && (
-              <p role="alert" className="text-red-700 text-xs mt-1">
-                {errors.logo.message}
+            <div className="flex flex-col justify-center p-2 gap-1">
+              <p className="text-xs font-semibold">Logotipo:</p>
+              <p className="text-xs font-light">
+                O logotipo é a identidade visual do seu negócio.
               </p>
-            )}
-          </Field>
-          <Field>
-            <Label className="text-sm/6 font-medium">Imagem de fundo</Label>
-            <div
-              onClick={() => {
-                inputBackgroundImageRef.current?.click();
-              }}
-              className={classNames(
-                "mt-1 w-full rounded-lg border border-gray-300 p-2 gap-2",
-                "flex flex-1 items-center justify-center cursor-pointer"
-              )}
-            >
+            </div>
+          </div>
+          <div className="flex flex-1 p-1 border border-neutral-200 rounded-lg">
+            <div className="flex items-center justify-center">
               <Input
                 type="file"
-                {...register("backgroundImage")}
+                hidden
                 onChange={(event) =>
                   handleChangeImage(event, "backgroundImage")
                 }
-                ref={inputBackgroundImageRef}
-                hidden
+                ref={(elementRef) => {
+                  inputBackgroundImageRef.current = elementRef;
+                }}
               />
-              <div className="h-16 w-16 flex items-center justify-center rounded-md overflow-hidden">
+              <div className="flex items-center justify-center rounded-md overflow-hidden border border-dashed border-neutral-200 hover:bg-neutral-100 bg-white cursor-pointer h-24 w-24 relative">
+                {(imagesPreview.backgroundImage || backgroundImageField) && (
+                  <div className="absolute flex gap-2 top-1 left-1">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button type="button" size="icon">
+                          <SquarePen />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        className="w-56"
+                        side="right"
+                        align="end"
+                      >
+                        <DropdownMenuItem
+                          onClick={() =>
+                            inputBackgroundImageRef.current?.click()
+                          }
+                        >
+                          <Pencil />
+                          <span>Alterar</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => handleDeleteImage("backgroundImage")}
+                        >
+                          <Trash2 />
+                          <span>Excluir</span>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                )}
                 {!!imagesPreview.backgroundImage ? (
                   <Image
                     src={URL.createObjectURL(imagesPreview.backgroundImage)}
-                    alt="Logo"
-                    className="object-cover w-full h-full"
-                    width={64}
-                    height={64}
+                    alt="Background Image"
+                    width={96}
+                    height={96}
+                    className="object-cover aspect-square"
                   />
-                ) : currentCompany?.info?.backgroundImage ? (
+                ) : !!backgroundImageField ? (
                   <ImageStorage
-                    path={currentCompany?.info?.backgroundImage || ""}
+                    path={backgroundImageField}
                     options={{
                       alt: "Background Image",
-                      width: 64,
-                      height: 64,
-                      className: "object-cover w-full h-full",
+                      width: 96,
+                      height: 96,
+                      className: "object-cover aspect-square",
                     }}
                   />
                 ) : (
-                  <IoImageOutline className="size-14" />
+                  <div
+                    onClick={() => inputBackgroundImageRef.current?.click()}
+                    className="aspect-square h-24 w-24 flex flex-col items-center justify-center gap-1"
+                  >
+                    <ImageIcon className="size-8" />
+                  </div>
                 )}
               </div>
-              <Description className="flex-1 text-xs font-light">
-                Uma imagem que represente o seu negócio.
-              </Description>
             </div>
-            {!!errors.backgroundImage && (
-              <p role="alert" className="text-red-700 text-xs mt-1">
-                {errors.backgroundImage.message}
+            <div className="flex flex-col justify-center p-2 gap-1">
+              <p className="text-xs font-semibold">Imagem de fundo:</p>
+              <p className="text-xs font-light">
+                Imagem principal que será exibida no cardápio.
               </p>
-            )}
-          </Field>
-        </Fieldset>
-        <Field>
-          <div className="flex items-center justify-between">
-            <Label className="text-sm/6 font-medium">Nome</Label>
-            <Description className="text-xs font-light">
-              www.ementai.com/menu/{replaceSpecialCharacters(watch("name"))}
-            </Description>
+            </div>
           </div>
-          <Input
-            type="text"
-            placeholder="O nome do seu negócio é o que os clientes verão primeiro."
-            {...register("name", {
-              required: "O nome do negócio é obrigatório.",
-            })}
-            className={classNames(
-              "mt-1 block w-full rounded-lg border border-gray-300 h-10 px-3 text-sm/6",
-              "focus:outline-none focus:border-gray-500 data-[focus]:outline-1 data-[focus]:outline-offset-0 data-[focus]:outline-gray-500"
-            )}
-          />
-          {!!errors.name && (
-            <p role="alert" className="text-red-700 text-xs mt-1">
-              {errors.name.message}
-            </p>
+        </div>
+        <FormField
+          control={control}
+          name="name"
+          rules={{ required: "O nome do negócio é obrigatório." }}
+          render={({ field }) => (
+            <FormItem>
+              <div className="flex items-center gap-2 justify-between">
+                <FormLabel>Nome:</FormLabel>
+                <FormDescription className="text-xs font-light leading-2">
+                  www.ementai.com/menu/{replaceSpecialCharacters(watch("name"))}
+                </FormDescription>
+              </div>
+              <FormControl>
+                <Input
+                  placeholder="O nome do seu negócio é o que os clientes verão primeiro."
+                  autoComplete="off"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
           )}
-        </Field>
-        <Field>
-          <Label className="text-sm/6 font-medium">Slogan (opcional)</Label>
-          <Input
-            type="text"
-            placeholder="Um slogan é uma frase curta que descreve o seu negócio."
-            {...register("slogan")}
-            className={classNames(
-              "mt-1 block w-full rounded-lg border border-gray-300 h-10 px-3 text-sm/6",
-              "focus:outline-none focus:border-gray-500 data-[focus]:outline-1 data-[focus]:outline-offset-0 data-[focus]:outline-gray-500"
-            )}
-          />
-        </Field>
-        <Fieldset>
-          <Field className="flex-1 flex items-center gap-2">
-            <Label className="text-sm/6 font-medium" htmlFor="primary-color">
-              Cor principal da sua marca:
-            </Label>
-            <div
-              className={classNames(
-                "h-8 rounded-md overflow-hidden cursor-pointer w-full flex-1"
-              )}
-              style={{ backgroundColor: watch("primaryColor") }}
-              onClick={() => inputPrimaryColorRef.current?.click()}
-            >
-              <Input
-                type="color"
-                id="primary-color"
-                {...primaryColorField}
-                ref={(elementRef) => {
-                  primaryColorField.ref(elementRef);
-                  inputPrimaryColorRef.current = elementRef;
-                }}
-                className="h-8 w-8 invisible"
-              />
-            </div>
-            {!!errors.primaryColor && (
-              <p role="alert" className="text-red-700 text-xs mt-1">
-                {errors.primaryColor.message}
-              </p>
-            )}
-          </Field>
-          <Field className="flex-1 flex items-center gap-2 mt-2">
-            <Label className="text-sm/6 cursor-pointer">
-              Aplicar tema escuro?
-            </Label>
-            <Controller
-              control={control}
-              name="isDark"
-              render={({ field }) => (
-                <div className="flex items-center gap-1">
-                  <Checkbox
-                    {...field}
-                    checked={field.value}
-                    className="group flex items-center justify-center size-5 border border-gray-200 cursor-pointer rounded-md bg-white ring-0 ring-white ring-inset data-[checked]:bg-teal-600 data-[checked]:border-teal-600"
+        />
+        <FormField
+          control={control}
+          name="slogan"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Slogan:</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="Um slogan é uma frase curta que descreve o seu negócio."
+                  {...field}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={control}
+          name="isDark"
+          render={({ field: { onChange, value, ...rest } }) => (
+            <FormItem className="flex items-center gap-2">
+              <FormLabel>Aplicar tema escuro?</FormLabel>
+              <FormControl>
+                <Checkbox
+                  {...rest}
+                  checked={value}
+                  onCheckedChange={onChange}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={control}
+          name="primaryColor"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Cor principal da sua marca:</FormLabel>
+              <FormControl className="relative">
+                <div className="flex">
+                  <div
+                    className="flex items-center cursor-pointer"
+                    onClick={() => inputPrimaryColorRef.current?.click()}
                   >
-                    <RiCheckLine className="hidden size-4 fill-white group-data-[checked]:block" />
-                  </Checkbox>
+                    <span className="h-9 w-10 bg-white text-sm border border-neutral-300 rounded-l-md flex items-center justify-center">
+                      <Palette />
+                    </span>
+                    <div
+                      style={{ backgroundColor: field.value }}
+                      className="h-9 w-10 rounded-r-md overflow-hidden flex items-center"
+                    >
+                      <Input
+                        type="color"
+                        {...field}
+                        className="absolute top-0 h-9 w-full invisible"
+                        ref={(elementRef) => {
+                          inputPrimaryColorRef.current = elementRef;
+                        }}
+                      />
+                    </div>
+                  </div>
                 </div>
-              )}
-            />
-          </Field>
-        </Fieldset>
-        <Field className="flex justify-end gap-2">
-          <Button
-            type="submit"
-            disabled={isSubmitting}
-            className="items-center min-w-24 gap-2 border rounded-md bg-teal-600 py-2 px-3 text-sm/6 font-semibold text-white disabled:opacity-50 focus:outline-none data-[hover]:bg-teal-700 data-[open]:bg-teal-700 data-[focus]:outline-1 data-[focus]:outline-white"
-          >
+              </FormControl>
+            </FormItem>
+          )}
+        />
+        <div className="flex justify-end">
+          <Button type="submit" disabled={isSubmitting} className="mt-2">
             Salvar
           </Button>
-        </Field>
+        </div>
       </form>
-    </div>
+    </Form>
   );
 }

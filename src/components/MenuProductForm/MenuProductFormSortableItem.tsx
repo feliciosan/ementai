@@ -15,7 +15,13 @@ import {
   AlertDialogTrigger,
 } from "../ui/alert-dialog";
 import { CSSProperties, useRef } from "react";
-import { GripVertical, Trash2, Image as ImageIcon, Pencil } from "lucide-react";
+import {
+  GripVertical,
+  Trash2,
+  Image as ImageIcon,
+  Pencil,
+  SquarePen,
+} from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { FormControl, FormField, FormItem, FormLabel } from "../ui/form";
 import { Checkbox } from "../ui/checkbox";
@@ -278,7 +284,7 @@ export default function MenuProductFormSortableItem({
             </div>
           </div>
         </div>
-        <div className="flex items-center justify-center cursor-pointer rounded-lg border border-dashed border-neutral-200 w-27 hover:bg-neutral-100">
+        <div className="flex items-center justify-center cursor-pointer rounded-lg border border-dashed border-neutral-200 w-27">
           <Input
             type="file"
             hidden
@@ -287,57 +293,59 @@ export default function MenuProductFormSortableItem({
               imageUrlsInputRef.current[index] = elementRef;
             }}
           />
-          <div className="flex items-center justify-center rounded-md overflow-hidden">
-            <DropdownMenu>
-              {!!imagesToUpload[index] ? (
-                <DropdownMenuTrigger>
-                  <Image
-                    src={URL.createObjectURL(imagesToUpload[index])}
-                    alt="Imagem do produto"
-                    width={96}
-                    height={96}
-                    className="object-cover h-25 w-25"
-                  />
-                </DropdownMenuTrigger>
-              ) : !!item.imageUrls?.length ? (
-                <DropdownMenuTrigger>
-                  <ImageStorage
-                    path={item.imageUrls?.[0] || ""}
-                    options={{
-                      alt: "Imagem do produto",
-                      width: 96,
-                      height: 96,
-                      className: "object-cover h-25 w-25",
-                    }}
-                  />
-                </DropdownMenuTrigger>
-              ) : (
-                <div
-                  onClick={() => imageUrlsInputRef.current?.[index]?.click()}
-                  className="h-25 w-25 flex flex-col items-center justify-center gap-1"
-                >
-                  <ImageIcon className="size-8" />
-                  <span className="text-xs">Imagem</span>
-                </div>
-              )}
-              <DropdownMenuContent
-                className="w-56"
-                side="top"
-                align="end"
-                sideOffset={8}
+          <div className="flex items-center justify-center rounded-md overflow-hidden relative">
+            {(!!imagesToUpload[index] || !!item.imageUrls?.length) && (
+              <div className="absolute top-1 left-1">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button type="button" size="icon">
+                      <SquarePen />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-56" side="left" align="end">
+                    <DropdownMenuItem
+                      onClick={() =>
+                        imageUrlsInputRef.current?.[index]?.click()
+                      }
+                    >
+                      <Pencil />
+                      <span>Alterar</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleDeleteImage(index)}>
+                      <Trash2 />
+                      <span>Excluir</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            )}
+            {!!imagesToUpload[index] ? (
+              <Image
+                src={URL.createObjectURL(imagesToUpload[index])}
+                alt="Imagem do produto"
+                width={96}
+                height={96}
+                className="object-cover h-24 w-24"
+              />
+            ) : !!item.imageUrls?.length ? (
+              <ImageStorage
+                path={item.imageUrls?.[0] || ""}
+                options={{
+                  alt: "Imagem do produto",
+                  width: 96,
+                  height: 96,
+                  className: "object-cover h-24 w-24",
+                }}
+              />
+            ) : (
+              <div
+                onClick={() => imageUrlsInputRef.current?.[index]?.click()}
+                className="h-24 w-24 flex flex-col items-center justify-center gap-1"
               >
-                <DropdownMenuItem
-                  onClick={() => imageUrlsInputRef.current?.[index]?.click()}
-                >
-                  <Pencil />
-                  <span>Alterar</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleDeleteImage(index)}>
-                  <Trash2 />
-                  <span>Deletar</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                <ImageIcon className="size-8" />
+                <span className="text-xs">Imagem</span>
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -28,10 +28,11 @@ export default function MenuContent({
                     }
                   )}
                 >
-                  <h2
-                    className="text-2xl font-semibold leading-6 relative z-10 line-clamp-2 border-l-5 pl-4"
-                    style={{ borderColor: info.theme?.primaryColor }}
-                  >
+                  <h2 className="text-2xl font-semibold leading-6 relative z-10 line-clamp-2 flex items-center gap-3">
+                    <div
+                      className="w-1.5 h-6 rounded-md"
+                      style={{ backgroundColor: info.theme?.primaryColor }}
+                    ></div>
                     {category.name}
                   </h2>
                 </div>

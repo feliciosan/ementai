@@ -45,7 +45,7 @@ export default function CompanyAditionalInfoForm() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex flex-col mt-6 relative gap-4"
+      className="flex flex-col relative gap-4"
     >
       <Field>
         <Label className="text-sm/6 font-medium">
@@ -101,9 +101,12 @@ export default function CompanyAditionalInfoForm() {
         )}
       </Field>
       <Field>
-        <Label className="text-sm/6 font-medium">Informações adicionais:</Label>
+        <Label htmlFor="adicional-info-title" className="text-sm/6 font-medium">
+          Informações adicionais:
+        </Label>
         <Input
           type="text"
+          id="adicional-info-title"
           placeholder="Título: Take Away, Desconto, etc..."
           {...register("extra.label")}
           className={classNames(
@@ -112,6 +115,7 @@ export default function CompanyAditionalInfoForm() {
           )}
         />
         <Textarea
+          id="adicional-info-description"
           rows={2}
           placeholder="10% OFF às quartas-feiras, use o cupom: TAKEAWAY"
           {...register("extra.value")}
