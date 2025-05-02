@@ -3,10 +3,12 @@
 import CompanyService from "@/services/company";
 import { ICompanyAditional, TCompanyResponse } from "@/services/company.types";
 import { useAuth } from "@/hooks/use-auth.hook";
-import { Button, Field, Input, Label, Textarea } from "@headlessui/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import classNames from "classnames";
 import { useForm } from "react-hook-form";
+import { Form, FormControl, FormField, FormItem, FormLabel } from "../ui/form";
+import { Input } from "../ui/input";
+import { Textarea } from "../ui/textarea";
+import { Button } from "../ui/button";
 
 export default function CompanyAditionalInfoForm() {
   const queryClient = useQueryClient();
@@ -28,13 +30,15 @@ export default function CompanyAditionalInfoForm() {
     },
   });
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<ICompanyAditional>({
+  const form = useForm<ICompanyAditional>({
     defaultValues: currentCompany?.info?.aditicional,
   });
+
+  const {
+    handleSubmit,
+    control,
+    formState: { isSubmitting },
+  } = form;
 
   const onSubmit = async (data: ICompanyAditional) => {
     await setCompanyInfo({
@@ -43,97 +47,92 @@ export default function CompanyAditionalInfoForm() {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="flex flex-col relative gap-4"
-    >
-      <Field>
-        <Label className="text-sm/6 font-medium">
-          Adicione o endereço do seu estabalecimento:
-        </Label>
-        <Textarea
-          placeholder="Ex: Rua, Número, Cidade, Código Postal"
-          {...register("address")}
-          className={classNames(
-            "mt-1 block w-full rounded-lg border border-gray-300 py-2 px-3 text-sm/6 resize-none",
-            "focus:outline-none focus:border-gray-500 data-[focus]:outline-1 data-[focus]:outline-offset-0 data-[focus]:outline-gray-500"
-          )}
-          rows={2}
-        />
-        {!!errors.address && (
-          <p role="alert" className="text-red-700 text-xs mt-1">
-            {errors.address?.message}
-          </p>
-        )}
-      </Field>
-      <Field>
-        <Label className="text-sm/6 font-medium">Telefone:</Label>
-        <Input
-          type="tel"
-          placeholder="Ex: 912345678"
-          {...register("phone")}
-          className={classNames(
-            "mt-1 block w-full rounded-lg border border-gray-300 h-10 px-3 text-sm/6",
-            "focus:outline-none focus:border-gray-500 data-[focus]:outline-1 data-[focus]:outline-offset-0 data-[focus]:outline-gray-500"
+    <Form {...form}>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col relative gap-4"
+      >
+        <FormField
+          control={control}
+          name="address"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Endereço do seu estabalecimento:</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="Ex: Rua, Número, Cidade, Código Postal."
+                  {...field}
+                />
+              </FormControl>
+            </FormItem>
           )}
         />
-        {!!errors.phone && (
-          <p role="alert" className="text-red-700 text-xs mt-1">
-            {errors.phone?.message}
-          </p>
-        )}
-      </Field>
-      <Field>
-        <Label className="text-sm/6 font-medium">E-mail:</Label>
-        <Input
-          type="email"
-          placeholder="meunegocio@gmail.com"
-          {...register("email")}
-          className={classNames(
-            "mt-1 block w-full rounded-lg border border-gray-300 h-10 px-3 text-sm/6",
-            "focus:outline-none focus:border-gray-500 data-[focus]:outline-1 data-[focus]:outline-offset-0 data-[focus]:outline-gray-500"
+        <FormField
+          control={control}
+          name="phone"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Telefone:</FormLabel>
+              <FormControl>
+                <Input type="tel" placeholder="Ex: 9xxxx-xxxx" {...field} />
+              </FormControl>
+            </FormItem>
           )}
         />
-        {!!errors.email && (
-          <p role="alert" className="text-red-700 text-xs mt-1">
-            {errors.email?.message}
-          </p>
-        )}
-      </Field>
-      <Field>
-        <Label htmlFor="adicional-info-title" className="text-sm/6 font-medium">
-          Informações adicionais:
-        </Label>
-        <Input
-          type="text"
-          id="adicional-info-title"
-          placeholder="Título: Take Away, Desconto, etc..."
-          {...register("extra.label")}
-          className={classNames(
-            "mt-1 block w-full rounded-lg border border-gray-300 h-10 px-3 text-sm/6",
-            "focus:outline-none focus:border-gray-500 data-[focus]:outline-1 data-[focus]:outline-offset-0 data-[focus]:outline-gray-500"
+        <FormField
+          control={control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>E-mail:</FormLabel>
+              <FormControl>
+                <Input
+                  type="email"
+                  placeholder="meunegocio@gmail.com"
+                  {...field}
+                />
+              </FormControl>
+            </FormItem>
           )}
         />
-        <Textarea
-          id="adicional-info-description"
-          rows={2}
-          placeholder="10% OFF às quartas-feiras, use o cupom: TAKEAWAY"
-          {...register("extra.value")}
-          className={classNames(
-            "mt-4 block w-full rounded-lg border border-gray-300 py-2 px-3 text-sm/6 resize-none",
-            "focus:outline-none focus:border-gray-500 data-[focus]:outline-1 data-[focus]:outline-offset-0 data-[focus]:outline-gray-500"
-          )}
-        />
-      </Field>
-      <Field className="flex justify-end gap-2">
-        <Button
-          type="submit"
-          disabled={isSubmitting}
-          className="items-center min-w-24 gap-2 border rounded-md bg-teal-600 py-2 px-3 text-sm/6 font-semibold text-white disabled:opacity-50 focus:outline-none data-[hover]:bg-teal-700 data-[open]:bg-teal-700 data-[focus]:outline-1 data-[focus]:outline-white"
-        >
-          Salvar
-        </Button>
-      </Field>
-    </form>
+        <div className="flex flex-col gap-2">
+          <FormField
+            control={control}
+            name="extra.label"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Informações adicionais:</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Título: Take Away, Desconto, etc..."
+                    {...field}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={control}
+            name="extra.value"
+            render={({ field }) => (
+              <FormItem className="flex-1">
+                <FormControl>
+                  <Textarea
+                    placeholder="10% OFF às quartas-feiras, use o cupom: TAKEAWAY."
+                    className="h-16 resize-none"
+                    {...field}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className="flex justify-end">
+          <Button type="submit" disabled={isSubmitting} className="mt-2">
+            Salvar
+          </Button>
+        </div>
+      </form>
+    </Form>
   );
 }

@@ -32,10 +32,10 @@ function LoginPage() {
   }
 
   return (
-    <div className="flex flex-col max-w-md mx-auto">
+    <div className="flex flex-col max-w-md mx-auto px-4">
       <div className="py-4">
         <h2 className="text-xl md:text-2xl font-extrabold line-clamp-2">
-          Entre agora e gerencie seu menu personalizado!
+          Entre agora e gerencie seu cardápio personalizado!
         </h2>
       </div>
       <div className="w-full rounded-xl bg-gray-50 p-6">

@@ -95,7 +95,7 @@ export default function MenuProductFormSortableItem({
             </Tooltip>
           </div>
           <div className="flex items-center justify-between flex-1">
-            <div className="flex items-center gap-4">
+            <div className="flex sm:items-center gap-4 sm:flex-row flex-col">
               <FormField
                 control={control}
                 name={`menu.${index}.new`}
@@ -189,7 +189,7 @@ export default function MenuProductFormSortableItem({
           )}
         />
       </div>
-      <div className="flex gap-2 px-2 pb-2">
+      <div className="flex gap-2 px-2 pb-2 sm:flex-row flex-col">
         <div className="flex-1 flex flex-col gap-2">
           <FormField
             control={control}
@@ -206,7 +206,7 @@ export default function MenuProductFormSortableItem({
               </FormItem>
             )}
           />
-          <div className="flex gap-2">
+          <div className="flex gap-2 sm:flex-row flex-col">
             <div className="flex flex-1 gap-2">
               <FormField
                 control={control}

@@ -85,8 +85,8 @@ export default function MenuCategoryForm({
     <Form {...form}>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className={cn("flex gap-2", {
-          "flex-col gap-4": isEditing,
+        className={cn("flex gap-2 sm:max-w-96", {
+          "flex-col gap-4 sm:max-w-auto": isEditing,
         })}
       >
         <FormField
@@ -94,15 +94,12 @@ export default function MenuCategoryForm({
           name="name"
           rules={{ required: "O nome da categoria é obrigatório" }}
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="flex-1">
               {!isEditing && <FormLabel>Adicionar categorias:</FormLabel>}
               <FormControl>
                 <Input
                   placeholder="Ex: Hamburgueres, Pizzas, Bebidas..."
                   autoFocus
-                  className={cn("w-72", {
-                    "w-full": isEditing,
-                  })}
                   {...field}
                 />
               </FormControl>

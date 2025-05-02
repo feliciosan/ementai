@@ -13,7 +13,7 @@ function PanelPage() {
       <div className="flex-1 px-4">
         <div className="py-4">
           <h1 className="text-xl md:text-2xl font-extrabold line-clamp-2">
-            Personalise o seu menu ao seu gosto
+            Personalise o seu cardápio
           </h1>
         </div>
         <ConfigForms />

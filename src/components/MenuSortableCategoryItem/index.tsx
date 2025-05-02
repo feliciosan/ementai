@@ -72,7 +72,7 @@ export default function MenuSortableCategoryItem({
         }
       )}
     >
-      <div className="flex items-center gap-x-4 w-full justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-x-4 gap-y-2 w-full justify-between">
         <div className="flex items-center gap-x-4">
           <div {...attributes} {...listeners}>
             <Tooltip>

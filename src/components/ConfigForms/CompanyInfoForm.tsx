@@ -1,5 +1,6 @@
 "use client";
 
+import { toast } from "sonner";
 import CompanyService from "@/services/company";
 import { TCompanyInfo, TCompanyResponse } from "@/services/company.types";
 import UploadService from "@/services/upload";
@@ -22,11 +23,11 @@ import {
 import { Input } from "../ui/input";
 import { Checkbox } from "../ui/checkbox";
 import {
-  Palette,
   Trash2,
   Image as ImageIcon,
   Pencil,
   SquarePen,
+  Copy,
 } from "lucide-react";
 import { Button } from "../ui/button";
 import {
@@ -35,12 +36,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import { CopyToClipboard } from "react-copy-to-clipboard";
 
 type ICompanyInfoForm = {
   logo?: string;
   backgroundImage?: string;
   name: string;
   slogan: string;
+  slug: string;
   primaryColor: string;
   isDark: boolean;
 };
@@ -63,6 +66,7 @@ export default function CompanyInfoForm() {
     defaultValues: {
       name: currentCompany?.info?.name || "",
       logo: currentCompany?.info?.logo || "",
+      slug: currentCompany?.slug || "",
       backgroundImage: currentCompany?.info?.backgroundImage || "",
       slogan: currentCompany?.info?.slogan || "",
       primaryColor: currentCompany?.info?.theme?.primaryColor || "#000000",
@@ -75,6 +79,7 @@ export default function CompanyInfoForm() {
     watch,
     control,
     setValue,
+    setError,
     formState: { isSubmitting },
   } = form;
 
@@ -94,6 +99,11 @@ export default function CompanyInfoForm() {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["get-company-by-id", currentCompany?.id],
+      });
+    },
+    onError: (error) => {
+      setError("slug", {
+        message: error.message,
       });
     },
   });
@@ -161,7 +171,7 @@ export default function CompanyInfoForm() {
     }
 
     await setCompanyInfo({
-      slug: replaceSpecialCharacters(data.name),
+      slug: data.slug,
       info: companyInfo,
     });
   };
@@ -331,21 +341,60 @@ export default function CompanyInfoForm() {
         <FormField
           control={control}
           name="name"
-          rules={{ required: "O nome do negócio é obrigatório." }}
+          rules={{
+            required: "O nome do negócio é obrigatório.",
+            onChange: (event) => {
+              if (currentCompany?.slug) return;
+
+              const { value } = event.target;
+              setValue("slug", replaceSpecialCharacters(value), {
+                shouldValidate: true,
+                shouldDirty: true,
+              });
+            },
+          }}
           render={({ field }) => (
             <FormItem>
-              <div className="flex items-center gap-2 justify-between">
-                <FormLabel>Nome:</FormLabel>
-                <FormDescription className="text-xs font-light leading-2">
-                  www.ementai.com/menu/{replaceSpecialCharacters(watch("name"))}
-                </FormDescription>
-              </div>
+              <FormLabel>Nome:</FormLabel>
               <FormControl>
                 <Input
                   placeholder="O nome do seu negócio é o que os clientes verão primeiro."
                   autoComplete="off"
                   {...field}
                 />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={control}
+          name="slug"
+          rules={{ required: "A URL do negócio é obrigatória." }}
+          render={({ field }) => (
+            <FormItem>
+              <div className="flex items-center gap-2 justify-between">
+                <FormLabel>Link do seu cardápio:</FormLabel>
+              </div>
+              <FormControl>
+                <div className="relative">
+                  <FormDescription className="text-sm text-neutral-600 absolute top-1 left-1 h-7 rounded-l-sm flex items-center pl-2">
+                    www.ementai.com/menu/
+                  </FormDescription>
+                  <Input autoComplete="off" className="pl-49 pr-8" {...field} />
+                  {currentCompany?.slug && (
+                    <div className="absolute top-1 right-2 h-7 flex items-center justify-center cursor-pointer">
+                      <CopyToClipboard
+                        text={`http://ementai.com/menu/${currentCompany?.slug}`}
+                        onCopy={() =>
+                          toast.success("Link copiado com sucesso!")
+                        }
+                      >
+                        <Copy className="size-5" />
+                      </CopyToClipboard>
+                    </div>
+                  )}
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -388,29 +437,16 @@ export default function CompanyInfoForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Cor principal da sua marca:</FormLabel>
-              <FormControl className="relative">
+              <FormControl>
                 <div className="flex">
-                  <div
-                    className="flex items-center cursor-pointer"
-                    onClick={() => inputPrimaryColorRef.current?.click()}
-                  >
-                    <span className="h-9 w-10 bg-white text-sm border border-neutral-300 rounded-l-md flex items-center justify-center">
-                      <Palette />
-                    </span>
-                    <div
-                      style={{ backgroundColor: field.value }}
-                      className="h-9 w-10 rounded-r-md overflow-hidden flex items-center"
-                    >
-                      <Input
-                        type="color"
-                        {...field}
-                        className="absolute top-0 h-9 w-full invisible"
-                        ref={(elementRef) => {
-                          inputPrimaryColorRef.current = elementRef;
-                        }}
-                      />
-                    </div>
-                  </div>
+                  <Input
+                    type="color"
+                    {...field}
+                    className="h-9 w-16"
+                    ref={(elementRef) => {
+                      inputPrimaryColorRef.current = elementRef;
+                    }}
+                  />
                 </div>
               </FormControl>
             </FormItem>

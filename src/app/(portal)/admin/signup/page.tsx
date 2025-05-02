@@ -34,10 +34,10 @@ function SignupPage() {
   }
 
   return (
-    <div className="flex flex-col max-w-md mx-auto">
+    <div className="flex flex-col max-w-md mx-auto px-4">
       <div className="py-4">
         <h2 className="text-xl md:text-2xl font-extrabold line-clamp-2">
-          Cadastre-se agora e crie seu menu personalizado em minutos!
+          Cadastre-se agora e crie seu cardápio digital em minutos!
         </h2>
       </div>
       <div className="w-full rounded-xl bg-gray-50 p-6">

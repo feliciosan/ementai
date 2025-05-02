@@ -1,6 +1,12 @@
-import { Metadata } from "next";
+import { Metadata, Viewport } from "next";
 import { AdminProviders } from "./admin-providers";
 import PortalHeader from "@/components/PortalHeader";
+
+export const viewport: Viewport = {
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
 
 export const metadata: Metadata = {
   title: "Ementai | Admin",

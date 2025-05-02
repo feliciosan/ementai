@@ -56,7 +56,7 @@ const CompanyService = {
       const company = await this.getCompanyBySlug(data.slug);
 
       if (company && company.id !== companyId) {
-        data.slug = `${data.slug}-${Date.now()}`;
+        throw new Error("Esse link já está sendo utilizado por outra empresa.");
       }
     }
 
