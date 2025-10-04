@@ -121,10 +121,7 @@ function SignupPage() {
           <Field>
             <Label className="text-sm/6 font-medium w-full text-center block">
               Já tem uma conta?{" "}
-              <Link
-                href="/admin/login"
-                className="text-teal-600 hover:text-teal-700"
-              >
+              <Link href="/admin" className="text-teal-600 hover:text-teal-700">
                 Entre agora
               </Link>
             </Label>

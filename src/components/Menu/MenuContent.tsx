@@ -28,7 +28,7 @@ export default function MenuContent({
                     }
                   )}
                 >
-                  <h2 className="text-2xl font-semibold leading-6 relative z-10 line-clamp-2 flex items-center gap-3">
+                  <h2 className="text-xl font-semibold relative z-10 line-clamp-2 flex items-center gap-3">
                     <div
                       className="w-1.5 h-6 rounded-md"
                       style={{ backgroundColor: info.theme?.primaryColor }}
@@ -79,11 +79,11 @@ export default function MenuContent({
                             )}
                           </div>
                         )}
-                        <p className="text-lg font-semibold">{item.title}</p>
+                        <p className="text-md font-semibold">{item.title}</p>
                         {item.description && (
                           <p
                             className={classnames(
-                              "text-sm line-clamp-2 leading-snug mb-1",
+                              "text-sm leading-snug mb-1",
                               getSecondaryTextColor(info.theme?.isDark)
                             )}
                           >
@@ -103,10 +103,10 @@ export default function MenuContent({
                                 className="flex flex-col"
                               >
                                 <div className="flex">
-                                  <span className="text-xl">
+                                  <span className="text-xl font-bold">
                                     {price.value.split(",")[0]}
                                   </span>
-                                  <span className="text-sm font-medium relative top-0.5">
+                                  <span className="text-sm relative top-0.5 font-bold">
                                     ,{price.value.split(",")[1]}
                                   </span>
                                 </div>

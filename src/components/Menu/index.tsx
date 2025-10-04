@@ -11,7 +11,13 @@ import { useQuery } from "@tanstack/react-query";
 import { menuMock } from "@/mocks/menu";
 import { TCompanyResponse } from "@/services/company.types";
 
-export default function Menu({ company }: { company: TCompanyResponse }) {
+export default function Menu({
+  company,
+  isAuthenticated,
+}: {
+  company: TCompanyResponse;
+  isAuthenticated?: boolean;
+}) {
   const {
     data: menu,
     isFetching,
@@ -32,8 +38,30 @@ export default function Menu({ company }: { company: TCompanyResponse }) {
     );
   }
 
+  if (!company?.info && isAuthenticated) {
+    return (
+      <div className="flex flex-col items-center mt-16 px-4">
+        <h1 className="text-white text-lg font-bold rounded-md bg-teal-600 px-2 py-1">
+          Ementai
+        </h1>
+        <p className="text-center text-white mt-4">
+          Configure as informações do seu estabelecimento no formulário ao lado.
+        </p>
+      </div>
+    );
+  }
+
   if (!company?.info) {
-    return <div>Not found</div>;
+    return (
+      <div className="flex flex-col items-center mt-16 px-4">
+        <h1 className="text-neutral-950 text-lg font-bold rounded-md bg-teal-600 px-2 py-1">
+          Ementai
+        </h1>
+        <p className="text-center text-neutral-950 mt-4">
+          Este cardápio não está disponível no momento.
+        </p>
+      </div>
+    );
   }
 
   return (

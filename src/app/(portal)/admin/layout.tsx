@@ -1,6 +1,6 @@
 import { Metadata, Viewport } from "next";
 import { AdminProviders } from "./admin-providers";
-import PortalHeader from "@/components/PortalHeader";
+import AdminHeader from "@/components/AdminHeader";
 
 export const viewport: Viewport = {
   initialScale: 1,
@@ -21,7 +21,7 @@ export default function PortalLayout({
   return (
     <AdminProviders>
       <div>
-        <PortalHeader />
+        <AdminHeader />
         <main className="w-full max-w-6xl mx-auto md:px-6 py-4">
           {children}
         </main>

@@ -14,7 +14,7 @@ const withProtected = <T extends object>(
 
     useEffect(() => {
       if (!isAuthenticated && !isAuthLoading) {
-        router.push("/admin/login");
+        router.push("/admin");
       }
     }, [router, isAuthenticated, isAuthLoading]);
 
