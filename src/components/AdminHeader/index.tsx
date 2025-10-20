@@ -89,7 +89,7 @@ export default function PortalHeader() {
                             width: "350px",
                             padding: "1cm",
                           }}
-                          value={`https://ementai.com.br/${currentCompany?.id}`}
+                          value={`https://app.ementai.com/menu/${currentCompany?.slug}`}
                           viewBox={`0 0 256 256`}
                           className="qr-code"
                         />

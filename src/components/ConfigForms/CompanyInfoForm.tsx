@@ -379,13 +379,13 @@ export default function CompanyInfoForm() {
               <FormControl>
                 <div className="relative">
                   <FormDescription className="text-sm text-neutral-600 absolute top-1 left-1 h-7 rounded-l-sm flex items-center pl-2">
-                    www.ementai.com.br/menu/
+                    ementai.com/menu/
                   </FormDescription>
-                  <Input autoComplete="off" className="pl-53 pr-8" {...field} />
+                  <Input autoComplete="off" className="pl-40 pr-8" {...field} />
                   {currentCompany?.slug && (
                     <div className="absolute top-1 right-2 h-7 flex items-center justify-center cursor-pointer">
                       <CopyToClipboard
-                        text={`https://ementai.com/menu/${currentCompany?.slug}`}
+                        text={`https://app.ementai.com/menu/${currentCompany?.slug}`}
                         onCopy={() =>
                           toast.success("Link copiado com sucesso!")
                         }
