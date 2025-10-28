@@ -94,7 +94,7 @@ function LoginPage() {
             <FcGoogle className="size-6 bg-white rounded-full" />
             <span>Entrar com Google</span>
           </Button>
-          <Field>
+          <Field className="text-center">
             <Label className="text-sm/6 font-medium w-full text-center block">
               Ainda não tem uma conta?{" "}
               <Link
@@ -104,6 +104,12 @@ function LoginPage() {
                 Cadastre-se
               </Link>
             </Label>
+            <Link
+              href="/admin/forgot-password"
+              className="text-sm font-medium text-teal-600 hover:text-teal-700 block mt-4"
+            >
+              Esqueceu a senha?
+            </Link>
           </Field>
         </form>
       </div>

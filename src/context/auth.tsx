@@ -10,11 +10,13 @@ import {
   AuthError,
   onAuthStateChanged,
   beforeAuthStateChanged,
+  sendPasswordResetEmail,
 } from "firebase/auth";
 import { app } from "@/config/firebase";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { TCompanyResponse } from "@/services/company.types";
 import CompanyService from "@/services/company";
+import { toast } from "sonner";
 
 interface IAuthContext {
   currentCompany: TCompanyResponse | null;
@@ -23,6 +25,7 @@ interface IAuthContext {
   signUp: (email: string, password: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signInWithGoogle: () => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -70,9 +73,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const authError = error as AuthError;
 
       if (authError.code === AuthErrorCodes.EMAIL_EXISTS) {
-        alert("Email não disponível! Por favor, tente outro.");
+        toast.error("Email não disponível! Por favor, tente outro.");
       } else {
-        alert("Algo deu errado! Por favor, tente novamente.");
+        toast.error("Algo deu errado! Por favor, tente novamente.");
       }
     }
   };
@@ -87,9 +90,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         authError.code === AuthErrorCodes.INVALID_EMAIL ||
         authError.code === AuthErrorCodes.INVALID_PASSWORD
       ) {
-        alert("Login inválido! Por favor, verifique seu email e senha.");
+        toast.error("Login inválido! Por favor, verifique seu email e senha.");
       } else {
-        alert("Algo deu errado! Por favor, tente novamente.");
+        toast.error("Algo deu errado! Por favor, tente novamente.");
       }
     }
   };
@@ -115,15 +118,42 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const authError = error as AuthError;
 
       if (authError.code === AuthErrorCodes.POPUP_CLOSED_BY_USER) {
-        alert("Login cancelado! Por favor, tente novamente.");
+        toast.error("Login cancelado! Por favor, tente novamente.");
       } else {
-        alert("Algo deu errado! Por favor, tente novamente.");
+        toast.error("Algo deu errado! Por favor, tente novamente.");
       }
     }
   };
 
   const logout = async () => {
     await signOut(firebaseAuth);
+  };
+
+  const resetPassword = async (email: string): Promise<void> => {
+    try {
+      const continueUrl =
+        typeof window !== "undefined"
+          ? `${window.location.origin}/admin`
+          : `${process.env.NEXT_PUBLIC_DOMAIN}/admin`;
+
+      await sendPasswordResetEmail(firebaseAuth, email, {
+        url: continueUrl,
+        handleCodeInApp: false,
+      });
+      toast.success(
+        "Email de recuperação enviado! Verifique sua caixa de entrada."
+      );
+    } catch (error: unknown) {
+      const authError = error as AuthError;
+
+      if (authError.code === AuthErrorCodes.INVALID_EMAIL) {
+        toast.error("Email inválido! Por favor, verifique o endereço.");
+      } else if (authError.code === AuthErrorCodes.USER_DELETED) {
+        toast.error("Email não encontrado! Verifique se está correto.");
+      } else {
+        toast.error("Erro ao enviar email de recuperação. Tente novamente.");
+      }
+    }
   };
 
   useEffect(() => {
@@ -155,6 +185,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         signInWithGoogle,
         signUp,
         signIn,
+        resetPassword,
         logout,
         isAuthLoading,
         isAuthenticated: !!currentCompany,

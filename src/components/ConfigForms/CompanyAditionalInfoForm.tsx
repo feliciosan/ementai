@@ -9,6 +9,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from "../ui/form";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
+import { toast } from "sonner";
 
 export default function CompanyAditionalInfoForm() {
   const queryClient = useQueryClient();
@@ -25,7 +26,7 @@ export default function CompanyAditionalInfoForm() {
     },
     onError: (error) => {
       if (error instanceof Error) {
-        alert(error.message);
+        toast.error(error.message);
       }
     },
   });

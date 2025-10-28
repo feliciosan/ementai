@@ -22,9 +22,7 @@ export default function PortalLayout({
     <AdminProviders>
       <div>
         <AdminHeader />
-        <main className="w-full max-w-6xl mx-auto md:px-6 py-4">
-          {children}
-        </main>
+        <main className="w-full max-w-6xl mx-auto py-4">{children}</main>
       </div>
     </AdminProviders>
   );

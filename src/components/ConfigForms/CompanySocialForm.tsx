@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "../ui/form";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
+import { toast } from "sonner";
 
 export default function CompanySocialForm() {
   const queryClient = useQueryClient();
@@ -24,7 +25,7 @@ export default function CompanySocialForm() {
     },
     onError: (error) => {
       if (error instanceof Error) {
-        alert(error.message);
+        toast.error(error.message);
       }
     },
   });

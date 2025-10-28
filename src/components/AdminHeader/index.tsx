@@ -14,7 +14,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "../ui/sheet";
-import { Menu, QrCode } from "lucide-react";
+import { Crown, Menu, QrCode } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -37,7 +37,7 @@ export default function PortalHeader() {
       <nav className="">
         {isAuthenticated && (
           <Fragment>
-            <div className="flex items-center justify-between w-full h-16 max-w-6xl mx-auto px-6 ">
+            <div className="flex items-center justify-between w-full h-16 max-w-6xl mx-auto px-4">
               <div className="flex items-center gap-8">
                 <Link href="/admin/home" className="flex items-center gap-2">
                   <Image
@@ -47,9 +47,6 @@ export default function PortalHeader() {
                     height={32}
                     className="w-8 h-8"
                   />
-                  {/* <h1 className="text-white text-lg font-bold rounded-md bg-teal-600 px-2 py-1">
-                    Ementai
-                  </h1> */}
                   <span className="text-lg font-bold text-white">Ementai</span>
                 </Link>
                 <ul className="hidden sm:flex items-center divide-x divide-neutral-700">
@@ -61,16 +58,17 @@ export default function PortalHeader() {
                   </li>
                 </ul>
               </div>
-              <div className="hidden sm:flex">
+              <div className="hidden sm:flex items-center gap-2">
                 <Dialog>
                   <DialogTrigger asChild>
                     <Button
                       type="button"
                       variant="outline"
+                      size="sm"
                       onClick={() => null}
                     >
                       <QrCode />
-                      Meu QR Code
+                      QR Code
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-[425px]">
@@ -100,6 +98,12 @@ export default function PortalHeader() {
                     </div>
                   </DialogContent>
                 </Dialog>
+                <Link href="/admin/subscription">
+                  <Button type="button" variant="secondary" size="sm">
+                    <Crown />
+                    Assinatura
+                  </Button>
+                </Link>
                 <Button type="button" onClick={() => logout()}>
                   Sair
                 </Button>
@@ -124,6 +128,13 @@ export default function PortalHeader() {
                       <li className="text-sm font-semibold p-4">
                         <SheetClose asChild>
                           <Link href="/admin/menu-settings">Meu cardápio</Link>
+                        </SheetClose>
+                      </li>
+                      <li className="text-sm font-semibold p-4">
+                        <SheetClose asChild>
+                          <Link href="/admin/subscription">
+                            Minha Assinatura
+                          </Link>
                         </SheetClose>
                       </li>
                       <li className="text-sm font-semibold p-4">

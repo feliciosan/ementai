@@ -67,7 +67,7 @@ export default function MenuSettingsPage() {
 
   return (
     <div>
-      <div className="my-4">
+      <div className="py-4">
         <h2 className="text-xl md:text-2xl font-extrabold line-clamp-2">
           Gerencie as categorias do seu cardápio
         </h2>

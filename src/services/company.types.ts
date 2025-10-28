@@ -40,10 +40,20 @@ export type TCompanyInfo = {
   social?: ICompanySocial;
 };
 
+export type TSubscription = {
+  status: "active" | "canceled" | "past_due" | "unpaid" | "incomplete";
+  stripeSubscriptionId: string;
+  stripePriceId: string;
+  stripeCustomerId: string;
+  cancelAtPeriodEnd: boolean;
+  currentPeriodEnd?: number; // Unix timestamp - when subscription will be canceled (cancel_at from Stripe)
+};
+
 export type TCompanyResponse = {
   id: string;
   email: string;
   slug?: string;
   info?: Partial<TCompanyInfo>;
   menu?: TCompanyMenu[];
+  subscription?: TSubscription;
 };
