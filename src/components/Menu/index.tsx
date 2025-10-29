@@ -32,7 +32,7 @@ export default function Menu({
 
   if (isFetching && !isFetched) {
     return (
-      <div className="flex justify-center mt-16">
+      <div className="flex justify-center mt-32">
         <Spinner type="local" />
       </div>
     );

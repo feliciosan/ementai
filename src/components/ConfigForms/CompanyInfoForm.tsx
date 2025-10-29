@@ -385,7 +385,7 @@ export default function CompanyInfoForm() {
                   {currentCompany?.slug && (
                     <div className="absolute top-1 right-2 h-7 flex items-center justify-center cursor-pointer">
                       <CopyToClipboard
-                        text={`https://app.ementai.com/menu/${currentCompany?.slug}`}
+                        text={`${process.env.NEXT_PUBLIC_DOMAIN}/menu/${currentCompany?.slug}`}
                         onCopy={() =>
                           toast.success("Link copiado com sucesso!")
                         }

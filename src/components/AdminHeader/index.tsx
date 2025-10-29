@@ -87,7 +87,7 @@ export default function PortalHeader() {
                             width: "350px",
                             padding: "1cm",
                           }}
-                          value={`https://app.ementai.com/menu/${currentCompany?.slug}`}
+                          value={`${process.env.NEXT_PUBLIC_DOMAIN}/qrcode/${currentCompany?.id}`}
                           viewBox={`0 0 256 256`}
                           className="qr-code"
                         />
@@ -99,7 +99,12 @@ export default function PortalHeader() {
                   </DialogContent>
                 </Dialog>
                 <Link href="/admin/subscription">
-                  <Button type="button" variant="secondary" size="sm">
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    size="sm"
+                    className="bg-gradient-to-r from-orange-500 to-red-600 text-white"
+                  >
                     <Crown />
                     Assinatura
                   </Button>

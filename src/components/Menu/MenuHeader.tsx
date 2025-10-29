@@ -8,14 +8,15 @@ import { useQuery } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 
 export default function MenuHeader({ info }: { info: Partial<TCompanyInfo> }) {
-  const { data: downloadedBackgroundImage } = useQuery({
-    queryKey: ["get-file-url", info.backgroundImage],
-    queryFn: () => {
-      return UploadService.getFileUrl(info.backgroundImage || "");
-    },
-    initialData: null,
-    enabled: !!info.backgroundImage,
-  });
+  const { data: downloadedBackgroundImage, isFetched: isBackgroundFetched } =
+    useQuery({
+      queryKey: ["get-file-url", info.backgroundImage],
+      queryFn: () => {
+        return UploadService.getFileUrl(info.backgroundImage || "");
+      },
+      initialData: null,
+      enabled: !!info.backgroundImage,
+    });
 
   return (
     <header className="flex flex-col">
@@ -32,11 +33,13 @@ export default function MenuHeader({ info }: { info: Partial<TCompanyInfo> }) {
             }
           )}
           style={{
-            backgroundImage: `url(${downloadedBackgroundImage})`,
+            backgroundImage: downloadedBackgroundImage
+              ? `url(${downloadedBackgroundImage})`
+              : "none",
           }}
         >
           <div className="flex items-center justify-center w-full h-full">
-            {!downloadedBackgroundImage && (
+            {!downloadedBackgroundImage && isBackgroundFetched && (
               <div
                 className={cn(
                   "w-full h-full rounded-xl flex items-center justify-center",
