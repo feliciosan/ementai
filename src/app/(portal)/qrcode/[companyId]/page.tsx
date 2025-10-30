@@ -1,35 +1,26 @@
-"use client";
-
-import Spinner from "@/components/Spinner";
 import CompanyService from "@/services/company";
-import { useQuery } from "@tanstack/react-query";
-import { useParams, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { redirect } from "next/navigation";
 
-export default function QrcodeReader() {
-  const params = useParams<{ companyId: string }>();
-  const router = useRouter();
+export default async function QrcodeReader({
+  params,
+}: {
+  params: Promise<{ companyId: string }>;
+}) {
+  const { companyId } = await params;
+  const company = await CompanyService.getCompanyById(companyId);
 
-  const { data: company, isFetched: isCompanyFetched } = useQuery({
-    queryKey: ["get-company-by-id", params.companyId],
-    queryFn: async () => CompanyService.getCompanyById(params.companyId || ""),
-    initialData: null,
-    enabled: !!params.companyId,
-  });
-
-  useEffect(() => {
-    if (isCompanyFetched && company) {
-      router.push(`/menu/${company?.slug}`);
-    }
-  }, [company, isCompanyFetched, router]);
-
-  if (isCompanyFetched && !company) {
-    return null;
+  if (company && company.slug) {
+    redirect(`/menu/${company.slug}`);
   }
 
   return (
-    <div className="flex justify-center mt-32">
-      <Spinner type="local" />
+    <div className="flex justify-center items-center min-h-screen">
+      <div className="text-center">
+        <h1 className="text-2xl font-bold mb-4">Empresa não encontrada</h1>
+        <p className="text-gray-600">
+          O QR Code que você escaneou não corresponde a uma empresa válida.
+        </p>
+      </div>
     </div>
   );
 }

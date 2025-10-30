@@ -1,5 +1,4 @@
 import { Metadata } from "next";
-import { QrcodeProviders } from "./qrcode-providers";
 
 export const metadata: Metadata = {
   title: "Ementai | Menu online",
@@ -12,5 +11,5 @@ export default function PortalLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <QrcodeProviders>{children}</QrcodeProviders>;
+  return <>{children}</>;
 }
