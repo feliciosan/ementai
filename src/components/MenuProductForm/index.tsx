@@ -46,12 +46,17 @@ export default function MenuProductForm({
   const { mutateAsync: setMenuItems } = useMutation({
     mutationKey: ["set-menu-items"],
     mutationFn: (data: TMenuCategoryItemPayload[]) =>
-      MenuService.setMenuItems(currentCompany?.id || "", categoryId, data),
+      MenuService.setMenuItems(currentCompany, categoryId, data),
     onSuccess: async () => {
       toast.success("Itens salvos com sucesso!");
       await queryClient.invalidateQueries({
         queryKey: ["get-category-items", currentCompany?.id, categoryId],
       });
+    },
+    onError: (error) => {
+      toast.error(
+        error instanceof Error ? error.message : "Erro ao salvar itens"
+      );
     },
   });
 

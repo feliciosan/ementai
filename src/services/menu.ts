@@ -18,6 +18,7 @@ import {
   TMenuCategoryItem,
   TMenuCategoryItemPayload,
 } from "./menu.types";
+import { TCompanyResponse } from "./company.types";
 
 const MenuService = {
   async getMenuCategories(companyId: string): Promise<TMenuCategory[]> {
@@ -109,13 +110,26 @@ const MenuService = {
     await batch.commit();
   },
   async createMenuCategory(
-    companyId: string,
+    company: TCompanyResponse | null,
     category: { name: string }
   ): Promise<void> {
-    const companyRef = doc(database, "companies", companyId);
+    if (!company) {
+      throw new Error("Empresa não encontrada");
+    }
+
+    const companyRef = doc(database, "companies", company.id);
     const menuCollectionRef = collection(companyRef, "menu");
     const categoriesSnapshot = await getDocs(menuCollectionRef);
-    const indexPosition = categoriesSnapshot.size;
+    const currentCategoriesCount = categoriesSnapshot.size;
+    const hasActiveSubscription = company.subscription?.status === "active";
+
+    if (!hasActiveSubscription && currentCategoriesCount >= 4) {
+      throw new Error(
+        "Limite de categorias atingido! Assine o Menu Pro para criar categorias ilimitadas."
+      );
+    }
+
+    const indexPosition = currentCategoriesCount;
 
     addDoc(menuCollectionRef, {
       name: category.name,
@@ -150,11 +164,23 @@ const MenuService = {
     await deleteDoc(categoryRef);
   },
   async setMenuItems(
-    companyId: string,
+    company: TCompanyResponse | null,
     categoryId: string,
     items: TMenuCategoryItemPayload[]
   ): Promise<void> {
-    const companyRef = doc(database, "companies", companyId);
+    if (!company) {
+      throw new Error("Empresa não encontrada");
+    }
+
+    const hasActiveSubscription = company.subscription?.status === "active";
+
+    if (!hasActiveSubscription && items.length > 5) {
+      throw new Error(
+        "Limite de itens por categoria atingido! Assine o Menu Pro para criar itens ilimitados."
+      );
+    }
+
+    const companyRef = doc(database, "companies", company.id);
     const menuCollectionRef = collection(companyRef, "menu");
     const categoryRef = doc(menuCollectionRef, categoryId);
     const itemsCollectionRef = collection(categoryRef, "items");

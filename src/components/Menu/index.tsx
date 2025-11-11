@@ -27,7 +27,22 @@ export default function Menu({
     queryFn: async () => MenuService.getMenuCategories(company?.id || ""),
     initialData: [],
     enabled: !!company?.id,
-    select: (menu) => (menu.length ? menu : menuMock),
+    select: (menu) => {
+      if (!menu.length) return menuMock;
+
+      const hasActiveSubscription = company?.subscription?.status === "active";
+
+      if (hasActiveSubscription) {
+        return menu;
+      }
+
+      return menu
+        .slice(0, 4) // Máximo 4 categorias
+        .map((category) => ({
+          ...category,
+          items: category.items.slice(0, 5), // Máximo 5 itens por categoria
+        }));
+    },
   });
 
   if (isFetching && !isFetched) {

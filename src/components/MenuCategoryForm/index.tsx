@@ -15,6 +15,7 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 type TMenuCategoryForm = { id?: string; name: string };
 
@@ -32,11 +33,17 @@ export default function MenuCategoryForm({
   const { mutateAsync: createCategory } = useMutation({
     mutationKey: ["create-category"],
     mutationFn: (data: TMenuCategoryForm) =>
-      MenuService.createMenuCategory(currentCompany?.id || "", data),
+      MenuService.createMenuCategory(currentCompany, data),
     onSuccess: () => {
+      toast.success("Categoria criada com sucesso!");
       queryClient.invalidateQueries({
         queryKey: ["get-menu", currentCompany?.id],
       });
+    },
+    onError: (error) => {
+      toast.error(
+        error instanceof Error ? error.message : "Erro ao criar categoria"
+      );
     },
   });
 
@@ -85,7 +92,7 @@ export default function MenuCategoryForm({
     <Form {...form}>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className={cn("flex gap-2 sm:max-w-96", {
+        className={cn("flex gap-2 sm:max-w-[600px]", {
           "flex-col gap-4 sm:max-w-auto": isEditing,
         })}
       >

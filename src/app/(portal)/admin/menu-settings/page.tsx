@@ -20,7 +20,7 @@ export default function MenuSettingsPage() {
   const [menuCategories, setMenuCategories] = useState<TMenuCategory[]>([]);
   const [allowSaveChanges, setAllowSaveChanges] = useState<boolean>(false);
 
-  const { data: menuCategoriesResponse } = useQuery({
+  const { data: menuCategoriesResponse, isFetched } = useQuery({
     queryKey: ["get-menu", currentCompany?.id],
     queryFn: async () =>
       MenuService.getMenuCategories(currentCompany?.id || ""),
@@ -35,11 +35,11 @@ export default function MenuSettingsPage() {
       companyId: string;
       orderedCategories: { id: string; index: number }[];
     }) => MenuService.updateMenuCategoryOrder(params),
-    onSuccess: async () => {
+    onSuccess: () => {
       toast.success("Ordem das categorias atualizada com sucesso!");
       setAllowSaveChanges(false);
 
-      await queryClient.invalidateQueries({
+      queryClient.invalidateQueries({
         queryKey: ["get-menu", currentCompany?.id],
       });
     },
@@ -61,9 +61,10 @@ export default function MenuSettingsPage() {
   };
 
   useEffect(() => {
-    if (!menuCategoriesResponse.length) return;
-    setMenuCategories(menuCategoriesResponse);
-  }, [menuCategoriesResponse]);
+    if (isFetched && Array.isArray(menuCategoriesResponse)) {
+      setMenuCategories(menuCategoriesResponse);
+    }
+  }, [isFetched, menuCategoriesResponse]);
 
   return (
     <div>
@@ -93,6 +94,14 @@ export default function MenuSettingsPage() {
               </div>
             </SortableContext>
           </DndContext>
+        </div>
+      )}
+      {!menuCategories.length && isFetched && (
+        <div className="flex justify-center rounded-lg p-6 border border-dashed border-gray-200">
+          <p className="text-sm text-gray-500">
+            Nenhuma categoria cadastrada. Adicione uma nova categoria para
+            começar.
+          </p>
         </div>
       )}
       <div

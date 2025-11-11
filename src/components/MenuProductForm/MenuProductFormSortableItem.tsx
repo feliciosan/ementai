@@ -41,6 +41,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import { useAuth } from "@/hooks/use-auth.hook";
+import { toast } from "sonner";
 
 export default function MenuProductFormSortableItem({
   index,
@@ -62,6 +64,9 @@ export default function MenuProductFormSortableItem({
   handleDelete: (index: number) => void;
   handleDeleteImage: (index: number) => void;
 }) {
+  const { currentCompany } = useAuth();
+  const hasActiveSubscription =
+    currentCompany?.subscription?.status === "active";
   const imageUrlsInputRef = useRef<(HTMLElement | null)[]>([]);
   const { attributes, listeners, setNodeRef, transform, transition, active } =
     useSortable({ id: item.fieldId });
@@ -69,6 +74,17 @@ export default function MenuProductFormSortableItem({
   const style: CSSProperties = {
     transform: CSS.Transform.toString(transform),
     transition,
+  };
+
+  const triggerChangeImage = () => {
+    if (!hasActiveSubscription) {
+      toast.error(
+        "Upload de imagens disponível apenas no Menu Pro! Assine para desbloquear esta funcionalidade."
+      );
+      return;
+    }
+
+    imageUrlsInputRef.current?.[index]?.click();
   };
 
   return (
@@ -304,14 +320,16 @@ export default function MenuProductFormSortableItem({
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-56" side="left" align="end">
                     <DropdownMenuItem
-                      onClick={() =>
-                        imageUrlsInputRef.current?.[index]?.click()
-                      }
+                      onClick={() => triggerChangeImage()}
+                      disabled={!hasActiveSubscription}
                     >
                       <Pencil />
                       <span>Alterar</span>
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleDeleteImage(index)}>
+                    <DropdownMenuItem
+                      onClick={() => handleDeleteImage(index)}
+                      disabled={!hasActiveSubscription}
+                    >
                       <Trash2 />
                       <span>Excluir</span>
                     </DropdownMenuItem>
@@ -339,11 +357,20 @@ export default function MenuProductFormSortableItem({
               />
             ) : (
               <div
-                onClick={() => imageUrlsInputRef.current?.[index]?.click()}
-                className="h-24 w-24 flex flex-col items-center justify-center gap-1"
+                onClick={() => triggerChangeImage()}
+                aria-disabled={!hasActiveSubscription}
+                className={cn(
+                  "h-24 w-24 flex flex-col items-center justify-center gap-1",
+                  {
+                    "cursor-pointer": hasActiveSubscription,
+                    "cursor-not-allowed opacity-50": !hasActiveSubscription,
+                  }
+                )}
               >
                 <ImageIcon className="size-8" />
-                <span className="text-xs">Imagem</span>
+                <span className="text-xs">
+                  {hasActiveSubscription ? "Imagem" : "Menu Pro"}
+                </span>
               </div>
             )}
           </div>
