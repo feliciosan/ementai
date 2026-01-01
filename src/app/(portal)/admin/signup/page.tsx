@@ -7,6 +7,7 @@ import { useAuth } from "@/hooks/use-auth.hook";
 import { FcGoogle } from "react-icons/fc";
 import withPublic from "@/HOC/public.route";
 import Link from "next/link";
+import Image from "next/image";
 
 type TSignupForm = {
   email: string;
@@ -36,6 +37,16 @@ function SignupPage() {
   return (
     <div className="flex flex-col max-w-md mx-auto px-4">
       <div className="py-4">
+        <div className="flex items-center gap-2 mb-6">
+          <Image
+            src="/logo-teal.svg"
+            alt="Ementai Logo"
+            width={32}
+            height={32}
+            className="w-8 h-8"
+          />
+          <span className="text-lg font-bold">Ementai</span>
+        </div>
         <h2 className="text-xl md:text-2xl font-extrabold line-clamp-2">
           Cadastre-se agora e crie seu cardápio digital em minutos!
         </h2>

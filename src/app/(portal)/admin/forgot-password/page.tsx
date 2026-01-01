@@ -7,6 +7,7 @@ import { useAuth } from "@/hooks/use-auth.hook";
 import { Button, Field, Input, Label } from "@headlessui/react";
 import classNames from "classnames";
 import withPublic from "@/HOC/public.route";
+import Image from "next/image";
 
 type TForgotPasswordForm = {
   email: string;
@@ -34,6 +35,16 @@ function ForgotPasswordPage() {
   return (
     <div className="flex flex-col max-w-md mx-auto px-4">
       <div className="py-4">
+        <div className="flex items-center gap-2 mb-6">
+          <Image
+            src="/logo-teal.svg"
+            alt="Ementai Logo"
+            width={32}
+            height={32}
+            className="w-8 h-8"
+          />
+          <span className="text-lg font-bold">Ementai</span>
+        </div>
         <h2 className="text-xl md:text-2xl font-extrabold line-clamp-2">
           Recupere sua senha e volte a gerenciar seu cardápio!
         </h2>
