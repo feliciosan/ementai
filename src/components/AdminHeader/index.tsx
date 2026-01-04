@@ -49,7 +49,7 @@ export default function PortalHeader() {
                   />
                   <span className="text-lg font-bold text-white">Ementai</span>
                 </Link>
-                <ul className="hidden sm:flex items-center divide-x divide-neutral-700">
+                <ul className="hidden md:flex items-center divide-x divide-neutral-700">
                   <li className="text-sm font-semibold text-white px-4">
                     <Link href="/admin/home">Informações do negócio</Link>
                   </li>
@@ -58,7 +58,7 @@ export default function PortalHeader() {
                   </li>
                 </ul>
               </div>
-              <div className="hidden sm:flex items-center gap-2">
+              <div className="flex items-center gap-2">
                 <Dialog>
                   <DialogTrigger asChild>
                     <Button type="button" variant="outline" size="sm">
@@ -93,62 +93,70 @@ export default function PortalHeader() {
                     </div>
                   </DialogContent>
                 </Dialog>
-                <Link href="/admin/subscription">
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    size="sm"
-                    className="bg-gradient-to-r from-orange-500 to-red-600 text-white"
-                  >
-                    <Crown />
-                    Assinatura
-                  </Button>
-                </Link>
-                <Button type="button" onClick={() => logout()}>
-                  Sair
-                </Button>
-              </div>
-              <div className="sm:hidden">
-                <Sheet>
-                  <SheetTrigger asChild>
-                    <Button type="button" size="icon" variant={"outline"}>
-                      <Menu />
+                <div className="hidden md:flex items-center gap-2">
+                  <Link href="/admin/subscription">
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      size="sm"
+                      className="bg-gradient-to-r from-orange-500 to-red-600 text-white"
+                    >
+                      <Crown />
+                      Assinatura
                     </Button>
-                  </SheetTrigger>
-                  <SheetContent>
-                    <SheetHeader>
-                      <SheetTitle>Menu</SheetTitle>
-                    </SheetHeader>
-                    <ul className="divide-y divide-neutral-100 px-4">
-                      <li className="text-sm font-semibold p-4">
-                        <SheetClose asChild>
-                          <Link href="/admin/home">Informações do negócio</Link>
-                        </SheetClose>
-                      </li>
-                      <li className="text-sm font-semibold p-4">
-                        <SheetClose asChild>
-                          <Link href="/admin/menu-settings">
-                            Itens do cardápio
-                          </Link>
-                        </SheetClose>
-                      </li>
-                      <li className="text-sm font-semibold p-4">
-                        <SheetClose asChild>
-                          <Link href="/admin/subscription">
-                            Minha Assinatura
-                          </Link>
-                        </SheetClose>
-                      </li>
-                      <li className="text-sm font-semibold p-4">
-                        <SheetClose asChild>
-                          <Button type="submit" onClick={() => logout()}>
-                            Sair
-                          </Button>
-                        </SheetClose>
-                      </li>
-                    </ul>
-                  </SheetContent>
-                </Sheet>
+                  </Link>
+                  <Button type="button" onClick={() => logout()}>
+                    Sair
+                  </Button>
+                </div>
+                <div className="md:hidden">
+                  <Sheet>
+                    <SheetTrigger asChild>
+                      <Button type="button" size="icon" variant={"outline"}>
+                        <Menu />
+                      </Button>
+                    </SheetTrigger>
+                    <SheetContent>
+                      <SheetHeader>
+                        <SheetTitle>Menu</SheetTitle>
+                      </SheetHeader>
+                      <ul className="divide-y divide-neutral-100 px-4">
+                        <li className="text-sm font-semibold p-4">
+                          <SheetClose asChild>
+                            <Link href="/admin/home">
+                              Informações do negócio
+                            </Link>
+                          </SheetClose>
+                        </li>
+                        <li className="text-sm font-semibold p-4">
+                          <SheetClose asChild>
+                            <Link href="/admin/menu-settings">
+                              Itens do cardápio
+                            </Link>
+                          </SheetClose>
+                        </li>
+                        <li className="text-sm font-semibold p-4">
+                          <SheetClose asChild>
+                            <Link
+                              href="/admin/subscription"
+                              className="flex items-center"
+                            >
+                              <Crown />
+                              <span className="ml-2">Minha Assinatura</span>
+                            </Link>
+                          </SheetClose>
+                        </li>
+                        <li className="text-sm font-semibold p-4">
+                          <SheetClose asChild>
+                            <Button type="submit" onClick={() => logout()}>
+                              Sair
+                            </Button>
+                          </SheetClose>
+                        </li>
+                      </ul>
+                    </SheetContent>
+                  </Sheet>
+                </div>
               </div>
             </div>
           </Fragment>
