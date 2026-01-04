@@ -54,7 +54,7 @@ export default function PortalHeader() {
                     <Link href="/admin/home">Informações do negócio</Link>
                   </li>
                   <li className="text-sm font-semibold text-white px-4">
-                    <Link href="/admin/menu-settings">Meu cardápio</Link>
+                    <Link href="/admin/menu-settings">Itens do cardápio</Link>
                   </li>
                 </ul>
               </div>
@@ -127,7 +127,9 @@ export default function PortalHeader() {
                       </li>
                       <li className="text-sm font-semibold p-4">
                         <SheetClose asChild>
-                          <Link href="/admin/menu-settings">Meu cardápio</Link>
+                          <Link href="/admin/menu-settings">
+                            Itens do cardápio
+                          </Link>
                         </SheetClose>
                       </li>
                       <li className="text-sm font-semibold p-4">
