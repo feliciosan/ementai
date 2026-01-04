@@ -61,12 +61,7 @@ export default function PortalHeader() {
               <div className="hidden sm:flex items-center gap-2">
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => null}
-                    >
+                    <Button type="button" variant="outline" size="sm">
                       <QrCode />
                       QR Code
                     </Button>

@@ -67,9 +67,9 @@ export default function UpgradeBanner({
   // Show expiration warning for scheduled cancellation
   if (isSubscribed && isScheduledForCancellation && currentPeriodEnd) {
     return (
-      <div className="relative overflow-hidden bg-gradient-to-r from-orange-600 to-red-600 rounded-lg shadow-lg mb-6 h-20">
+      <div className="relative overflow-hidden bg-gradient-to-r from-orange-600 to-red-600 rounded-lg shadow-lg mb-6 sm:h-20">
         <div className="relative px-6 py-4 h-full">
-          <div className="flex items-center justify-between h-full">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 h-full">
             {/* Left side - Warning Content */}
             <div className="flex items-center gap-4">
               <div className="bg-yellow-400 p-2 rounded-full">
@@ -113,9 +113,9 @@ export default function UpgradeBanner({
   }
 
   return (
-    <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg shadow-lg mb-6 h-20">
+    <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg shadow-lg mb-6 sm:h-20">
       <div className="relative px-6 py-4 h-full">
-        <div className="flex items-center justify-between h-full">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 h-full">
           {/* Left side - Content */}
           <div className="flex items-center gap-4">
             <div className="bg-yellow-400 p-2 rounded-full">
