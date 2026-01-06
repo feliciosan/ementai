@@ -8,6 +8,7 @@ import { FcGoogle } from "react-icons/fc";
 import withPublic from "@/HOC/public.route";
 import Link from "next/link";
 import Image from "next/image";
+import HeroInfo from "@/components/HeroInfo/HeroInfo";
 
 type TSignupForm = {
   email: string;
@@ -33,7 +34,7 @@ function LoginPage() {
   }
 
   return (
-    <div className="flex flex-col max-w-md mx-auto px-4">
+    <div className="flex flex-col mx-auto px-4">
       <div className="py-4">
         <div className="flex items-center gap-2 mb-6">
           <Image
@@ -45,11 +46,22 @@ function LoginPage() {
           />
           <span className="text-lg font-bold">Ementai</span>
         </div>
-        <h2 className="text-xl md:text-2xl font-extrabold line-clamp-2">
-          Entre agora e gerencie seu cardápio personalizado!
-        </h2>
       </div>
-      <div className="w-full rounded-xl bg-gray-50 p-6">
+      <div className="md:flex md:space-x-10">
+        <div className="flex-3">
+          <HeroInfo
+            titleStart="Acesse sua conta e gerencie"
+            titleEndColored="seu cardápio digital"
+            description="Atualize seus produtos, preços e informações em tempo real. Seu menu sempre atualizado e acessível para seus clientes."
+          />
+        </div>
+        <div className="flex-2 mt-10 md:mt-2 mb-8">
+          <div className="flex flex-col mb-2">
+            <h2 className="text-xl font-bold line-clamp-2 mb-1">
+              Entre agora e gerencie seu cardápio personalizado!
+            </h2>
+          </div>
+          <div className="w-full rounded-xl bg-gray-50 p-6">
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
           <Field>
             <Label className="text-sm/6 font-medium">E-mail</Label>
@@ -125,6 +137,8 @@ function LoginPage() {
         </form>
       </div>
     </div>
+  </div>
+</div>
   );
 }
 
